@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Statically Determinate | ESE Exam Prep</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <style>
+    :root {
+      --navy: #1a3a5c;
+      --orange: #e67e22;
+      --light: #f4f7fa;
+      --text: #2c3e50;
+      --muted: #5b6b7c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* --- Header --- */
+    header {
+      background: var(--navy);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    header img { height: 58px; }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 1.4rem;
+      font-weight: 500;
+      font-size: 0.92rem;
+    }
+
+    nav a:hover { color: var(--orange); }
+
+    /* --- Hero --- */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, #2c5f8a 100%);
+      color: #fff;
+      padding: 4.5rem 2rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #fff;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-size: 2.6rem;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 span { color: var(--orange); }
+
+    .hero p {
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      font-size: 1.05rem;
+      opacity: 0.92;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      padding: 0.8rem 1.9rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #cf6d17; }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #fff;
+      margin-left: 0.7rem;
+    }
+
+    .btn-outline:hover { background: #fff; color: var(--navy); }
+
+    /* --- Stats strip --- */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      background: #fff;
+      max-width: 1000px;
+      margin: -2rem auto 0;
+      border-radius: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat {
+      padding: 1.4rem 1rem;
+      text-align: center;
+      border-right: 1px solid #eef2f6;
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat strong {
+      display: block;
+      font-size: 1.6rem;
+      color: var(--navy);
+    }
+
+    .stat span {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* --- Sections --- */
+    section {
+      max-width: 1100px;
+      margin: 3.5rem auto;
+      padding: 0 2rem;
+    }
+
+    section h2 {
+      font-size: 1.6rem;
+      color: var(--navy);
+      border-left: 5px solid var(--orange);
+      padding-left: 0.9rem;
+      margin-bottom: 1.6rem;
+    }
+
+    /* --- Subject cards --- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1.6rem 1.4rem;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+      border-top: 4px solid var(--orange);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      color: var(--navy);
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .card a {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--orange);
+      text-decoration: none;
+    }
+
+    .card a:hover { text-decoration: underline; }
+
+    /* --- Quick links table --- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.8rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eef2f6;
+    }
+
+    th {
+      background: var(--navy);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.82rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    td a { color: var(--orange); text-decoration: none; font-weight: 500; }
+    td a:hover { text-decoration: underline; }
+
+    /* --- Notice --- */
+    .notice {
+      background: #fff8ee;
+      border-left: 4px solid var(--orange);
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      color: #7a5a2e;
+      margin-top: 2rem;
+    }
+
+    /* --- Footer --- */
+    footer {
+      background: var(--navy);
+      color: #c8d4e0;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      font-size: 0.85rem;
+      margin-top: 3rem;
+    }
+
+    footer a { color: var(--orange); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.9rem; }
+      .btn-outline { margin-left: 0; margin-top: 0.7rem; }
+      nav a { margin-left: 0.9rem; font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <img src="logo.svg" alt="Statically Determinate — ESE Exam Prep" />
+    <nav>
+      <a href="#subjects">Subjects</a>
+      <a href="#resources">Resources</a>
+      <a href="landing.html">Study Plan</a>
+    </nav>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="badge">UPSC ESE &amp; STATE PSC PREPARATION</div>
+    <h1>Study <span>Smarter</span>, Not Just Harder</h1>
+    <p>
+      A free, structured revision hub for the Engineering Services Examination —
+      subject-wise notes, previous-year questions, formula sheets, and a
+      week-by-week study plan.
+    </p>
+    <a href="#subjects" class="btn">Browse Subjects</a>
+    <a href="landing.html" class="btn btn-outline">View Study Plan</a>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <div class="stats">
+    <div class="stat"><strong>6+</strong><span>Subjects</span></div>
+    <div class="stat"><strong>10</strong><span>Years of PYQs</span></div>
+    <div class="stat"><strong>20+</strong><span>Formula Sheets</span></div>
+    <div class="stat"><strong>100%</strong><span>Free &amp; Open</span></div>
+  </div>
+
+  <!-- ===== SUBJECTS ===== -->
+  <section id="subjects">
+    <h2>Subject-Wise Notes</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Structural Analysis</h3>
+        <p>Determinate beams, trusses and frames, SFD &amp; BMD, influence lines,
+           unit load method.</p>
+        <a href="#">Open notes &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>RCC Design</h3>
+        <p>Limit state method, IS 456 provisions, singly &amp; doubly reinforced
+           beams, slabs, columns.</p>
+        <a href="#">Open notes &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Steel Design</h3>
+        <p>IS 800 provisions, bolted &amp; welded connections, tension and
+           compression members.</p>
+        <a href="#">Open notes &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Geotechnical Engineering</h3>
+        <p>Index properties, permeability, shear strength, bearing capacity,
+           shallow &amp; deep foundations.</p>
+        <a href="#">Open notes &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Fluid Mechanics</h3>
+        <p>Fluid properties, Bernoulli's equation, flow through pipes, hydraulic
+           machines and turbines.</p>
+        <a href="#">Open notes &rarr;</a>
+      </div>
+      <div class="card">
+        <h3>Previous Year Questions</h3>
+        <p>Topic-tagged ESE prelims and mains questions with solutions and
+           difficulty ratings.</p>
+        <a href="#">Open PYQs &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESOURCES ===== -->
+  <section id="resources">
+    <h2>Quick Resources</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Resource</th>
+          <th>Best For</th>
+          <th>When to Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#">Formula Sheets</a></td>
+          <td>Last-minute revision</td>
+          <td>Final 2 weeks</td>
+        </tr>
+        <tr>
+          <td><a href="#">Topic-Wise PYQs</a></td>
+          <td>Understanding question patterns</td>
+          <td>Throughout preparation</td>
+        </tr>
+        <tr>
+          <td><a href="#">Solved Examples</a></td>
+          <td>Building numerical speed</td>
+          <td>After each topic</td>
+        </tr>
+        <tr>
+          <td><a href="#">Mock Tests</a></td>
+          <td>Time management</td>
+          <td>Final 2 months</td>
+        </tr>
+        <tr>
+          <td><a href="landing.html">Study Plan</a></td>
+          <td>Weekly scheduling</td>
+          <td>Day 1 onwards</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="notice">
+      <strong>Note:</strong> This is an independent study resource and is not
+      affiliated with UPSC. Always verify the syllabus against the latest
+      official notification.
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <p>&copy; 2026 Statically Determinate &mdash; Engineering Services Exam Prep.</p>
+    <p><a href="landing.html">Study Plan</a> · <a href="#subjects">Subjects</a></p>
+  </footer>
+
+</body>
+</html>
