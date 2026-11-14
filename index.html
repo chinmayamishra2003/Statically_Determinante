@@ -106,12 +106,12 @@
 
     .btn-outline:hover { background: #fff; color: var(--navy); }
 
-    /* --- Countdowns --- */
+    /* --- Countdowns (days only, IST) --- */
     .countdowns {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
-      max-width: 660px;
+      max-width: 560px;
       margin: 2.6rem auto 0;
     }
 
@@ -119,17 +119,17 @@
       background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.18);
       border-radius: 10px;
-      padding: 1rem 0.9rem 0.85rem;
-      transition: opacity 0.2s, border-color 0.2s;
+      padding: 1.1rem 0.9rem 1rem;
+      transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
     }
 
-    /* the nearest upcoming exam */
+    /* The nearest upcoming exam gets an orange accent */
     .countdown.is-next {
       border-color: var(--orange);
-      box-shadow: 0 0 0 1px rgba(230,126,34,0.4);
+      box-shadow: 0 0 0 1px rgba(230,126,34,0.45);
     }
 
-    /* an exam that has already happened */
+    /* An exam that has already happened fades out */
     .countdown.is-past { opacity: 0.5; }
 
     .countdown-label {
@@ -137,52 +137,47 @@
       letter-spacing: 1.6px;
       text-transform: uppercase;
       font-weight: 700;
-      margin-bottom: 0.7rem;
       color: #fff;
+      margin-bottom: 0.8rem;
     }
 
-    .countdown-label em {
-      font-style: normal;
-      color: var(--orange);
-    }
+    .countdown-label em { font-style: normal; color: var(--orange); }
 
-    .countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.45rem;
-    }
+    .countdown-grid { display: block; }
 
     .cd-unit {
       background: rgba(255,255,255,0.08);
-      border-radius: 6px;
-      padding: 0.55rem 0.2rem 0.4rem;
+      border-radius: 8px;
+      padding: 0.9rem 0.5rem 0.7rem;
       text-align: center;
     }
 
     .cd-unit strong {
       display: block;
-      font-size: 1.35rem;
-      line-height: 1.1;
+      font-size: 2.2rem;
+      line-height: 1;
       color: #fff;
       font-variant-numeric: tabular-nums;
     }
 
     .cd-unit span {
-      font-size: 0.58rem;
-      letter-spacing: 1px;
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.62rem;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      opacity: 0.75;
+      opacity: 0.8;
     }
 
-    /* final 30 days before a given exam */
+    /* Final 30 days before a given exam */
     .countdown.urgent .cd-unit strong { color: #ff7b6b; }
 
     .countdown-done {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 600;
       color: var(--orange);
       text-align: center;
-      padding: 0.7rem 0;
+      padding: 0.8rem 0;
     }
 
     /* --- Stats strip --- */
@@ -336,9 +331,7 @@
       .hero h1 { font-size: 1.9rem; }
       .btn-outline { margin-left: 0; margin-top: 0.7rem; }
       nav a { margin-left: 0.9rem; font-size: 0.85rem; }
-      .cd-unit strong { font-size: 1.2rem; }
-      .cd-unit span { font-size: 0.55rem; letter-spacing: 0.8px; }
-      .countdown-grid { gap: 0.35rem; }
+      .cd-unit strong { font-size: 1.9rem; }
     }
   </style>
 </head>
@@ -366,29 +359,23 @@
     <a href="#subjects" class="btn">Browse Subjects</a>
     <a href="landing.html" class="btn btn-outline">View Study Plan</a>
 
-    <!-- ===== COUNTDOWNS ===== -->
+    <!-- ===== COUNTDOWNS (days only, IST) ===== -->
     <div class="countdowns">
 
       <!-- Prelims -->
-      <div class="countdown" data-countdown data-target="2027-01-31T10:00:00+05:30">
+      <div class="countdown" data-countdown data-target="2027-01-31">
         <p class="countdown-label"><em>Prelims</em> &middot; 31 Jan 2027</p>
         <div class="countdown-grid">
-          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days</span></div>
-          <div class="cd-unit"><strong data-cd="hours">--</strong><span>Hours</span></div>
-          <div class="cd-unit"><strong data-cd="mins">--</strong><span>Mins</span></div>
-          <div class="cd-unit"><strong data-cd="secs">--</strong><span>Secs</span></div>
+          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days to go</span></div>
         </div>
         <p class="countdown-done" hidden>Prelims is here — all the best!</p>
       </div>
 
       <!-- Mains -->
-      <div class="countdown" data-countdown data-target="2027-06-18T10:00:00+05:30">
+      <div class="countdown" data-countdown data-target="2027-06-18">
         <p class="countdown-label"><em>Mains</em> &middot; 18 Jun 2027</p>
         <div class="countdown-grid">
-          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days</span></div>
-          <div class="cd-unit"><strong data-cd="hours">--</strong><span>Hours</span></div>
-          <div class="cd-unit"><strong data-cd="mins">--</strong><span>Mins</span></div>
-          <div class="cd-unit"><strong data-cd="secs">--</strong><span>Secs</span></div>
+          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days to go</span></div>
         </div>
         <p class="countdown-done" hidden>Mains is here — all the best!</p>
       </div>
@@ -489,8 +476,10 @@
 
     <div class="notice">
       <strong>Note:</strong> This is an independent study resource and is not
-      affiliated with UPSC. Always verify the syllabus and exam dates against
-      the latest official notification.
+      affiliated with UPSC. Exam dates shown are <strong>31 January 2027
+      (Prelims)</strong> and <strong>18 June 2027 (Mains)</strong>. Countdowns
+      use Indian Standard Time (Asia/Kolkata). Always verify against the latest
+      official notification.
     </div>
   </section>
 
