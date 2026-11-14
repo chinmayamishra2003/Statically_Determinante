@@ -16,6 +16,8 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    [hidden] { display: none !important; }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #fff;
@@ -23,6 +25,7 @@
       line-height: 1.7;
     }
 
+    /* --- Top bar --- */
     .topbar {
       background: var(--navy);
       padding: 0.8rem 2rem;
@@ -38,9 +41,10 @@
     .topbar a { color: #fff; text-decoration: none; font-size: 0.9rem; }
     .topbar a:hover { color: var(--orange); }
 
+    /* --- Hero --- */
     .hero {
       background: var(--light);
-      padding: 4rem 2rem;
+      padding: 3.5rem 2rem 4rem;
       text-align: center;
     }
 
@@ -48,17 +52,94 @@
       font-size: 2.3rem;
       color: var(--navy);
       margin-bottom: 0.9rem;
+      line-height: 1.25;
     }
 
     .hero h1 em { font-style: normal; color: var(--orange); }
 
-    .hero p {
+    .hero p.lede {
       max-width: 680px;
       margin: 0 auto;
       color: var(--muted);
       font-size: 1.05rem;
     }
 
+    /* --- Countdowns --- */
+    .countdowns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      max-width: 660px;
+      margin: 2.2rem auto 0;
+    }
+
+    .countdown {
+      background: var(--navy);
+      border: 1px solid var(--navy);
+      border-radius: 10px;
+      padding: 1rem 0.9rem 0.85rem;
+      transition: opacity 0.2s, box-shadow 0.2s;
+    }
+
+    /* The nearest upcoming exam gets an orange accent */
+    .countdown.is-next {
+      box-shadow: 0 0 0 2px var(--orange);
+    }
+
+    /* An exam that has already happened fades out */
+    .countdown.is-past { opacity: 0.5; }
+
+    .countdown-label {
+      font-size: 0.72rem;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.7rem;
+    }
+
+    .countdown-label em { font-style: normal; color: var(--orange); }
+
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.45rem;
+    }
+
+    .cd-unit {
+      background: rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.55rem 0.2rem 0.4rem;
+      text-align: center;
+    }
+
+    .cd-unit strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cd-unit span {
+      font-size: 0.58rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #a9bdd2;
+    }
+
+    /* Final 30 days before a given exam */
+    .countdown.urgent .cd-unit strong { color: #ff7b6b; }
+
+    .countdown-done {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--orange);
+      text-align: center;
+      padding: 0.7rem 0;
+    }
+
+    /* --- Sections --- */
     section {
       max-width: 1000px;
       margin: 3.5rem auto;
@@ -73,7 +154,7 @@
       margin-bottom: 1.4rem;
     }
 
-    /* Phases */
+    /* --- Phases --- */
     .phases {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -108,7 +189,7 @@
 
     .phase p { font-size: 0.88rem; color: var(--muted); }
 
-    /* Table */
+    /* --- Table --- */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -144,7 +225,7 @@
       font-weight: 600;
     }
 
-    /* FAQ */
+    /* --- FAQ --- */
     .faq p {
       margin-bottom: 1rem;
       font-size: 0.92rem;
@@ -152,7 +233,18 @@
 
     .faq strong { color: var(--navy); }
 
-    /* CTA */
+    /* --- Notice --- */
+    .notice {
+      background: #fff8ee;
+      border-left: 4px solid var(--orange);
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      color: #7a5a2e;
+      margin-top: 1.5rem;
+    }
+
+    /* --- CTA --- */
     .cta {
       background: var(--navy);
       color: #fff;
@@ -191,24 +283,64 @@
     }
 
     footer a { color: var(--orange); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .cd-unit strong { font-size: 1.2rem; }
+      .cd-unit span { font-size: 0.55rem; letter-spacing: 0.8px; }
+      .countdown-grid { gap: 0.35rem; }
+    }
   </style>
 </head>
 <body>
 
+  <!-- ===== TOP BAR ===== -->
   <div class="topbar">
     <img src="logo.svg" alt="Statically Determinate" />
     <a href="index.html">&larr; Back to Dashboard</a>
   </div>
 
+  <!-- ===== HERO ===== -->
   <div class="hero">
     <h1>A <em>Determinate</em> Study Plan</h1>
-    <p>
+    <p class="lede">
       No guesswork, no endless scrolling. Follow a clear four-phase plan built
-      around the ESE syllabus, with revision cycles and mock-test checkpoints.
+      around the ESE syllabus, with revision cycles and mock-test checkpoints —
+      timed to land well before Prelims on 31 January 2027.
     </p>
+
+    <!-- ===== COUNTDOWNS ===== -->
+    <div class="countdowns">
+
+      <!-- Prelims -->
+      <div class="countdown" data-countdown data-target="2027-01-31T10:00:00+05:30">
+        <p class="countdown-label"><em>Prelims</em> &middot; 31 Jan 2027</p>
+        <div class="countdown-grid">
+          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days</span></div>
+          <div class="cd-unit"><strong data-cd="hours">--</strong><span>Hours</span></div>
+          <div class="cd-unit"><strong data-cd="mins">--</strong><span>Mins</span></div>
+          <div class="cd-unit"><strong data-cd="secs">--</strong><span>Secs</span></div>
+        </div>
+        <p class="countdown-done" hidden>Prelims is here — all the best!</p>
+      </div>
+
+      <!-- Mains -->
+      <div class="countdown" data-countdown data-target="2027-06-18T10:00:00+05:30">
+        <p class="countdown-label"><em>Mains</em> &middot; 18 Jun 2027</p>
+        <div class="countdown-grid">
+          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days</span></div>
+          <div class="cd-unit"><strong data-cd="hours">--</strong><span>Hours</span></div>
+          <div class="cd-unit"><strong data-cd="mins">--</strong><span>Mins</span></div>
+          <div class="cd-unit"><strong data-cd="secs">--</strong><span>Secs</span></div>
+        </div>
+        <p class="countdown-done" hidden>Mains is here — all the best!</p>
+      </div>
+
+    </div>
   </div>
 
-  <!-- Phases -->
+  <!-- ===== PHASES ===== -->
   <section>
     <h2>Four-Phase Approach</h2>
     <div class="phases">
@@ -235,7 +367,7 @@
     </div>
   </section>
 
-  <!-- Weightage -->
+  <!-- ===== SUBJECT PRIORITY ===== -->
   <section>
     <h2>Subject Priority (Civil Engineering)</h2>
     <table>
@@ -279,9 +411,16 @@
         </tr>
       </tbody>
     </table>
+
+    <div class="notice">
+      <strong>Note:</strong> Exam dates are shown as 31 January 2027 (Prelims)
+      and 18 June 2027 (Mains). Always cross-check with the latest official UPSC
+      notification — if a date shifts, update the <code>data-target</code>
+      attribute on both countdown cards.
+    </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- ===== FAQ ===== -->
   <section class="faq">
     <h2>Common Questions</h2>
     <p>
@@ -300,19 +439,26 @@
       formula-sheet-only pass in the final month.
     </p>
     <p>
+      <strong>How should I use the two countdowns?</strong><br />
+      Treat Prelims as your first hard deadline — aim to be fully revision-ready
+      a month before it. Mains is roughly four and a half months later, leaving
+      room for in-depth answer-writing practice once Prelims is done.
+    </p>
+    <p>
       <strong>Are these notes enough on their own?</strong><br />
       They are a revision aid. Pair them with at least one standard textbook per
       subject and the official syllabus.
     </p>
   </section>
 
-  <!-- CTA -->
+  <!-- ===== CTA ===== -->
   <div class="cta">
     <h2>Start with the subject notes</h2>
     <p>Everything is free, open, and organised by topic.</p>
     <a href="index.html#subjects">Go to Dashboard</a>
   </div>
 
+  <!-- ===== FOOTER ===== -->
   <footer>
     <p>
       &copy; 2026 Statically Determinate &mdash;
@@ -321,5 +467,6 @@
     </p>
   </footer>
 
+  <script src="countdown.js"></script>
 </body>
 </html>
