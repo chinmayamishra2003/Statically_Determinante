@@ -1,494 +1,435 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statically Determinate | ESE Exam Prep</title>
-  <link rel="icon" type="image/svg+xml" href="logo.svg" />
-  <style>
-    :root {
-      --navy: #1a3a5c;
-      --orange: #e67e22;
-      --light: #f4f7fa;
-      --text: #2c3e50;
-      --muted: #5b6b7c;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Statically Determinate · IES Civil Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8fafc;--card:#fff;--ink:#14213d;--mut:#6b7b92;--line:#e3e9f2;
+  --acc:#1f4e8c;--hi:#e8a317;--ok:#2f8f5b;--urg:#b0281b;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px)
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1522;--card:#16202f;--ink:#e6ecf5;--mut:#92a3bb;--line:#2a3a52;
+    --acc:#6aa5ee;--hi:#f0b93a;--ok:#4cc58a;--urg:#ff8b7a;
+    color-scheme:dark
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1522;--card:#16202f;--ink:#e6ecf5;--mut:#92a3bb;--line:#2a3a52;
+  --acc:#6aa5ee;--hi:#f0b93a;--ok:#4cc58a;--urg:#ff8b7a;
+  color-scheme:dark
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'Source Serif 4',Georgia,serif}
+h1,h2,h3,.sans,button,nav a,label,select,input,textarea{font-family:Archivo,system-ui,sans-serif}
+header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:2px solid var(--ink);background:var(--card);flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.mark{font:800 22px Archivo,sans-serif;border:2px solid var(--ink);padding:2px 9px;background:var(--hi);color:#14213d}
+.logo b{display:block;font:800 20px/1.1 Archivo,sans-serif;letter-spacing:-.01em}
+.logo small{font:500 12px Archivo,sans-serif;color:var(--mut)}
+nav{display:flex;gap:2px;flex-wrap:wrap;margin-left:auto}
+nav a{padding:7px 12px;color:var(--ink);text-decoration:none;font-weight:600;font-size:14px;border-bottom:3px solid transparent}
+nav a.on{border-color:var(--hi)}
+nav a:hover{background:var(--bg)}
+#tt{background:transparent;border:1px solid var(--ink);color:var(--ink);padding:7px 12px;font:600 13px Archivo,sans-serif;cursor:pointer;margin-left:8px;white-space:nowrap}
+#tt:hover{background:var(--bg)}
+main{max-width:1080px;margin:0 auto;padding:22px 18px 60px}
+h2{font-size:28px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);padding:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+button,.btn{background:var(--ink);color:var(--bg);border:0;padding:8px 14px;font-weight:700;font-size:14px;cursor:pointer}
+button.alt{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+input,select,textarea{width:100%;padding:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
+label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin:10px 0 3px}
+.bar{height:8px;background:var(--line)}
+.bar i{display:block;height:100%;background:var(--ok)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1 1 150px}
+details{border:1px solid var(--line);background:var(--card);margin-bottom:8px}
+summary{padding:10px 14px;font:700 16px Archivo,sans-serif;cursor:pointer}
+details>div{padding:4px 14px 12px}
+.t{display:flex;gap:8px;align-items:flex-start;padding:3px 0}
+.t input{width:auto;margin-top:6px}
+.f{font-family:'Source Serif 4',serif;background:var(--bg);padding:6px 10px;margin:5px 0;border-left:3px solid var(--hi);overflow-x:auto}
+.tag{font:600 12px Archivo,sans-serif;background:var(--bg);border:1px solid var(--line);padding:1px 7px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:14px}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+/* Countdown */
+.countdowns{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:14px;margin-bottom:18px
+}
+.countdown{
+  background:var(--card);border:1px solid var(--line);
+  padding:18px 14px 16px;text-align:center;
+  transition:border-color .2s, box-shadow .2s, opacity .2s
+}
+.countdown.is-next{border-color:var(--hi);box-shadow:0 0 0 2px var(--hi)}
+.countdown.is-past{opacity:.55}
+.cd-label{
+  font:700 12px Archivo,sans-serif;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:12px
+}
+.cd-num{
+  font:800 56px/1 Archivo,sans-serif;color:var(--ink);
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums
+}
+.cd-sub{
+  font:600 12px Archivo,sans-serif;color:var(--mut);
+  margin-top:8px;text-transform:uppercase;letter-spacing:.08em
+}
+.cd-done{font:700 16px Archivo,sans-serif;color:var(--ok);padding:26px 0}
+.countdown.urgent .cd-num{color:var(--urg)}
+@media (max-width:520px){
+  .cd-num{font-size:44px}
+}
 
-    [hidden] { display: none !important; }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--light);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    /* --- Header --- */
-    header {
-      background: var(--navy);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    header img { height: 58px; }
-
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      margin-left: 1.4rem;
-      font-weight: 500;
-      font-size: 0.92rem;
-    }
-
-    nav a:hover { color: var(--orange); }
-
-    /* --- Hero --- */
-    .hero {
-      background: linear-gradient(135deg, var(--navy) 0%, #2c5f8a 100%);
-      color: #fff;
-      padding: 4rem 2rem 4.5rem;
-      text-align: center;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.35);
-      color: #fff;
-      padding: 0.3rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.78rem;
-      letter-spacing: 1.5px;
-      font-weight: 600;
-      margin-bottom: 1.2rem;
-    }
-
-    .hero h1 {
-      font-size: 2.6rem;
-      line-height: 1.25;
-      margin-bottom: 1rem;
-    }
-
-    .hero h1 span { color: var(--orange); }
-
-    .hero p.lede {
-      max-width: 680px;
-      margin: 0 auto 2rem;
-      font-size: 1.05rem;
-      opacity: 0.92;
-    }
-
-    .btn {
-      display: inline-block;
-      background: var(--orange);
-      color: #fff;
-      padding: 0.8rem 1.9rem;
-      border-radius: 4px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: background 0.2s;
-    }
-
-    .btn:hover { background: #cf6d17; }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #fff;
-      margin-left: 0.7rem;
-    }
-
-    .btn-outline:hover { background: #fff; color: var(--navy); }
-
-    /* --- Countdowns (days only, IST) --- */
-    .countdowns {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-      max-width: 560px;
-      margin: 2.6rem auto 0;
-    }
-
-    .countdown {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 10px;
-      padding: 1.1rem 0.9rem 1rem;
-      transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-
-    /* The nearest upcoming exam gets an orange accent */
-    .countdown.is-next {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 1px rgba(230,126,34,0.45);
-    }
-
-    /* An exam that has already happened fades out */
-    .countdown.is-past { opacity: 0.5; }
-
-    .countdown-label {
-      font-size: 0.72rem;
-      letter-spacing: 1.6px;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.8rem;
-    }
-
-    .countdown-label em { font-style: normal; color: var(--orange); }
-
-    .countdown-grid { display: block; }
-
-    .cd-unit {
-      background: rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 0.9rem 0.5rem 0.7rem;
-      text-align: center;
-    }
-
-    .cd-unit strong {
-      display: block;
-      font-size: 2.2rem;
-      line-height: 1;
-      color: #fff;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .cd-unit span {
-      display: block;
-      margin-top: 0.35rem;
-      font-size: 0.62rem;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      opacity: 0.8;
-    }
-
-    /* Final 30 days before a given exam */
-    .countdown.urgent .cd-unit strong { color: #ff7b6b; }
-
-    .countdown-done {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--orange);
-      text-align: center;
-      padding: 0.8rem 0;
-    }
-
-    /* --- Stats strip --- */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      background: #fff;
-      max-width: 1000px;
-      margin: -2rem auto 0;
-      border-radius: 8px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-      overflow: hidden;
-      position: relative;
-      z-index: 2;
-    }
-
-    .stat {
-      padding: 1.4rem 1rem;
-      text-align: center;
-      border-right: 1px solid #eef2f6;
-    }
-
-    .stat:last-child { border-right: none; }
-
-    .stat strong {
-      display: block;
-      font-size: 1.6rem;
-      color: var(--navy);
-    }
-
-    .stat span {
-      font-size: 0.8rem;
-      color: var(--muted);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    /* --- Sections --- */
-    section {
-      max-width: 1100px;
-      margin: 3.5rem auto;
-      padding: 0 2rem;
-    }
-
-    section h2 {
-      font-size: 1.6rem;
-      color: var(--navy);
-      border-left: 5px solid var(--orange);
-      padding-left: 0.9rem;
-      margin-bottom: 1.6rem;
-    }
-
-    /* --- Subject cards --- */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: #fff;
-      border-radius: 8px;
-      padding: 1.6rem 1.4rem;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
-      border-top: 4px solid var(--orange);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 22px rgba(0,0,0,0.1);
-    }
-
-    .card h3 {
-      color: var(--navy);
-      font-size: 1.05rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .card p {
-      font-size: 0.88rem;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
-    .card a {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--orange);
-      text-decoration: none;
-    }
-
-    .card a:hover { text-decoration: underline; }
-
-    /* --- Quick links table --- */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
-      font-size: 0.9rem;
-    }
-
-    th, td {
-      padding: 0.8rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #eef2f6;
-    }
-
-    th {
-      background: var(--navy);
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.82rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    tr:last-child td { border-bottom: none; }
-
-    td a { color: var(--orange); text-decoration: none; font-weight: 500; }
-    td a:hover { text-decoration: underline; }
-
-    /* --- Notice --- */
-    .notice {
-      background: #fff8ee;
-      border-left: 4px solid var(--orange);
-      padding: 1rem 1.2rem;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      color: #7a5a2e;
-      margin-top: 2rem;
-    }
-
-    /* --- Footer --- */
-    footer {
-      background: var(--navy);
-      color: #c8d4e0;
-      text-align: center;
-      padding: 2rem 1.5rem;
-      font-size: 0.85rem;
-      margin-top: 3rem;
-    }
-
-    footer a { color: var(--orange); text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
-
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 1.9rem; }
-      .btn-outline { margin-left: 0; margin-top: 0.7rem; }
-      nav a { margin-left: 0.9rem; font-size: 0.85rem; }
-      .cd-unit strong { font-size: 1.9rem; }
-    }
-  </style>
+/* QCAB */
+#out{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:16px}
+.sheet{width:210mm;height:297mm;background:#fff;color:#111;position:relative;box-shadow:0 1px 8px rgba(0,0,0,.25);overflow:hidden;font-family:'Source Serif 4',serif;flex:none}
+.sheet .lines{position:absolute;left:25mm;right:12mm;top:36mm;bottom:14mm;background:repeating-linear-gradient(to bottom,transparent 0 7.4mm,#9db4cf 7.4mm 7.55mm)}
+.sheet .m1,.sheet .m2{position:absolute;top:0;bottom:0;width:.3mm;background:#c0392b}
+.sheet .m1{left:24mm}
+.sheet .m2{left:25mm}
+.sheet .rm{position:absolute;right:12mm;top:0;bottom:0;width:.3mm;background:#c0392b}
+.sheet .hd{position:absolute;left:25mm;right:12mm;top:10mm;height:22mm;border-bottom:.4mm solid #111;font:600 10pt Archivo,sans-serif;display:flex;flex-direction:column;justify-content:space-between}
+.sheet .hd div{display:flex;justify-content:space-between;gap:8px}
+.sheet .q{font:600 11pt/1.4 'Source Serif 4',serif;position:absolute;left:27mm;right:14mm;top:36mm;z-index:2;background:#fff;padding:1.5mm 2mm;border:.3mm solid #111;margin-bottom:2mm}
+.sheet .pn{position:absolute;bottom:5mm;width:100%;text-align:center;font:500 9pt Archivo,sans-serif}
+@media print{
+  @page{size:A4;margin:0}
+  header,nav,.noprint,.sub,h2{display:none!important}
+  body,main{background:#fff;padding:0;margin:0;max-width:none}
+  .view:not(#v-qcab){display:none!important}
+  #out{margin:0;gap:0;display:block}
+  .sheet{box-shadow:none;page-break-after:always;break-after:page}
+}
+</style>
 </head>
 <body>
 
-  <!-- ===== HEADER ===== -->
-  <header>
-    <img src="logo.svg" alt="Statically Determinate — ESE Exam Prep" />
-    <nav>
-      <a href="#subjects">Subjects</a>
-      <a href="#resources">Resources</a>
-      <a href="landing.html">Study Plan</a>
-    </nav>
-  </header>
+<header>
+  <a class="logo" href="#dash">
+    <span class="mark">ΣF</span>
+    <span>
+      <b>Statically Determinate</b>
+      <small>ΣF = 0 · ΣM = 0 · IES Civil Engineering</small>
+    </span>
+  </a>
+  <nav id="nav"></nav>
+  <button id="tt" aria-label="Toggle theme">🌙 Dark</button>
+</header>
 
-  <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="badge">UPSC ESE &amp; STATE PSC PREPARATION</div>
-    <h1>Study <span>Smarter</span>, Not Just Harder</h1>
-    <p class="lede">
-      A free, structured revision hub for the Engineering Services Examination —
-      subject-wise notes, previous-year questions, formula sheets, and a
-      week-by-week study plan.
-    </p>
-    <a href="#subjects" class="btn">Browse Subjects</a>
-    <a href="landing.html" class="btn btn-outline">View Study Plan</a>
+<main id="main"></main>
 
-    <!-- ===== COUNTDOWNS (days only, IST) ===== -->
-    <div class="countdowns">
+<script>
+/* ---- Theme toggle (light default, dark persists) ---- */
+(function(){
+  try{
+    var saved = localStorage.getItem('theme');
+    if(saved === 'dark' || saved === 'light'){
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  }catch(e){}
+})();
+function currentTheme(){
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function updateThemeBtn(){
+  var b = document.getElementById('tt');
+  if(!b) return;
+  b.textContent = currentTheme() === 'dark' ? '☀ Light' : '🌙 Dark';
+}
+document.getElementById('tt').addEventListener('click', function(){
+  var next = currentTheme() === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try{ localStorage.setItem('theme', next); }catch(e){}
+  updateThemeBtn();
+});
 
-      <!-- Prelims -->
-      <div class="countdown" data-countdown data-target="2027-01-31">
-        <p class="countdown-label"><em>Prelims</em> &middot; 31 Jan 2027</p>
-        <div class="countdown-grid">
-          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days to go</span></div>
-        </div>
-        <p class="countdown-done" hidden>Prelims is here — all the best!</p>
-      </div>
+/* ---- Subjects data ---- */
+const SUB=[
+{n:"Building Materials & Construction",t:"Timber, bricks, stones, lime, cement & admixtures;Cement concrete: mix design, workability, strength, durability;Steel, aluminium, glass, plastics, bitumen, paints;Masonry, plastering, flooring, roofing;Building services basics",note:"Concrete strength depends mainly on w/c ratio (Abrams). Know IS 10262 mix design steps and curing effects.",f:["Abrams: fc = A / B^(w/c)","Modulus of rupture fcr = 0.7√fck (MPa)","Ec = 5000√fck (MPa)","Young’s modulus of steel Es = 2×10⁵ MPa"]},
+{n:"Solid Mechanics",t:"Elastic constants, stress-strain, thermal stresses;Principal stresses & Mohr’s circle;Bending & shear stress in beams;Torsion of shafts;Columns & struts, Euler/Rankine;Thin & thick cylinders;Theories of failure;Strain energy, unsymmetrical bending, shear centre",note:"Draw Mohr’s circle neatly with sign convention stated. Always check slenderness before choosing Euler vs Rankine.",f:["σ = My/I , τ = VAȲ/(Ib)","E = 2G(1+μ) = 3K(1−2μ)","Euler: Pcr = π²EI/Le²","T/J = τ/r = Gθ/L","τmax = √(((σx−σy)/2)²+τxy²)","Thin cylinder: σh = pd/2t , σl = pd/4t"]},
+{n:"Structural Analysis",t:"Determinacy & stability, trusses;Moment distribution, slope-deflection;Stiffness & flexibility matrix methods;Influence lines & moving loads;Arches & cables;Energy methods, Castigliano, unit load;Plastic analysis of beams & frames",note:"Choose the method by degree of indeterminacy: kinematic DoF small → slope-deflection/stiffness; static DoF small → force method.",f:["Ds = 3m + r − 3j (plane truss: m+r−2j)","Slope-deflection: M = 4EIθ/L + FEM","Distribution factor = k/Σk","δ = ∫ M m dx / EI (unit load)","Plastic: Mp = σy·Z , shape factor = Z/S"]},
+{n:"Design of Steel Structures",t:"Limit state method (IS 800), bolted & welded connections;Tension members, compression members;Beams, plate girders, gantry girders;Industrial roofs, trusses, purlins;Column bases, eccentric connections",note:"Check shear lag and block shear in tension members; effective length & buckling class for compression members.",f:["Bolt shear Vnsb = fu/√3 (nn Anb + ns Asb)/γmb","Tdg = Ag fy/γm0","Weld strength = fu/(√3 γmw) × throat × length","Pd = Ae fcd"]},
+{n:"Design of Concrete & Masonry",t:"Limit state design: flexure, shear, torsion, bond (IS 456);Singly/doubly reinforced & flanged beams;Slabs: one-way, two-way, flat;Columns, footings;Prestressed concrete: losses, analysis;Masonry design",note:"Always write xu,max/d limits and state assumptions. Prestress losses table is a frequent short question.",f:["Mu = 0.87 fy Ast d (1 − Ast fy/(b d fck))","xu,max/d = 0.48 (Fe415), 0.46 (Fe500)","τv = Vu/(bd)","Ld = φ·0.87fy/(4τbd)","Pu = 0.4 fck Ac + 0.67 fy Asc"]},
+{n:"Construction Planning & Management",t:"CPM & PERT, crashing, resource levelling;Equipment: earthmoving, cranes, concreting;Contracts, tendering, arbitration;Quality, safety, estimation & costing;Engineering economics, EVM",note:"Network problems: always state critical path, floats and project duration clearly in a table.",f:["TF = LFT − EFT − duration","PERT te = (to + 4tm + tp)/6","σ² = ((tp − to)/6)²","SPI = EV/PV , CPI = EV/AC"]},
+{n:"Fluid Mechanics & Hydraulic Machines",t:"Fluid statics, kinematics, Bernoulli;Momentum equation, boundary layer;Pipe flow, pipe networks, water hammer;Open channel flow: uniform, GVF, hydraulic jump;Turbines & pumps, dimensional analysis",note:"Open channel: classify profile (M1, S2…) before computing. Always apply energy and momentum equations in the right place.",f:["Q = A V , Bernoulli: p/γ + V²/2g + z = const","Manning: V = (1/n) R^(2/3) S^(1/2)","Froude Fr = V/√(gD)","Hydraulic jump: y2/y1 = ½(√(1+8Fr1²) − 1)","hf = f L V²/(2 g d)","P = γ Q H"]},
+{n:"Hydrology & Irrigation",t:"Rainfall-runoff, hydrographs, unit hydrograph;Flood routing, flood frequency;Groundwater, well hydraulics;Crop water requirement, canal design;Gravity dams, spillways, weirs, Khosla’s theory",note:"Unit hydrograph steps: separate baseflow, find ERH, ordinates by dividing DRH by depth. Regime theory for canals: Kennedy vs Lacey.",f:["Rational: Q = CiA/360 (A in ha)","Duty D = 8.64 B/Δ","Dupuit (unconfined): Q = πk(h2²−h1²)/ln(r2/r1)","Lacey: V = (Qf²/140)^(1/6)","Gravity dam: FOS sliding = μΣV/ΣH"]},
+{n:"Environmental Engineering",t:"Water demand, sources, quality standards;Treatment: coagulation, sedimentation, filtration, disinfection;Sewage characteristics, BOD, DO sag;Wastewater treatment: ASP, trickling filter, sludge;Solid waste management;Air & noise pollution, ecology, EIA",note:"Always give design numbers (SOR, detention time, loading) with units. DO sag curve questions need the critical deficit steps.",f:["BODt = L0(1 − e^(−kt))","Overflow rate = Q/A","Detention time t = V/Q","Population forecast: geometric Pn = P0(1+r)^n","Streeter-Phelps critical time tc = (1/(kr−kd)) ln[...]"]},
+{n:"Soil Mechanics & Foundation",t:"Index properties, classification (IS);Permeability, seepage, flow nets;Compaction, consolidation, settlement;Shear strength, Mohr-Coulomb;Earth pressure, slope stability;Bearing capacity, pile & well foundations, ground improvement",note:"State drainage conditions (UU, CU, CD). Compare Rankine vs Coulomb. Consolidation: use Terzaghi’s Tv and Cc correctly.",f:["e = wGs/S , γd = Gγw/(1+e)","τ = c + σ′ tanφ","Terzaghi: qu = cNc + γDNq + 0.5γBNγ","Sc = Cc H/(1+e0) log(σ′f/σ′0)","Ka = (1−sinφ)/(1+sinφ)","Tv = cv t/Hdr²"]},
+{n:"Surveying & Geology",t:"Chain, compass, levelling, theodolite, traversing;Tacheometry, curves, EDM, total station;GPS, GIS, remote sensing, photogrammetry;Engineering geology: rocks, structures, dams & tunnels, earthquakes",note:"Traverse adjustment (Bowditch) and curve setting out come often. For geology, link rock type to project suitability.",f:["Tacheometry: D = Ks + C","Simple curve R = 5730/D (arc basis)","Tangent length T = R tan(Δ/2)","Bowditch: correction ∝ side length","Curvature & refraction hc = 0.0673 D² (m, D in km)"]},
+{n:"Transportation Engineering",t:"Highway geometric design, sight distance;Pavement design: flexible (IRC 37), rigid (IRC 58);Traffic engineering, capacity, signals;Railways: track, points & crossings, signalling;Airport planning & runway design;Ports & harbours basics",note:"Use IRC codes by number in answers. Draw sketches for geometric design and highlight design speed assumptions.",f:["SSD = 0.278Vt + V²/(254(f ± 0.01 n))","Superelevation e + f = V²/(127R)","Webster: C0 = (1.5L+5)/(1−Y)","Rigid pavement stress by Westergaard","Runway length corrections: elevation, temperature, gradient"]}];
 
-      <!-- Mains -->
-      <div class="countdown" data-countdown data-target="2027-06-18">
-        <p class="countdown-label"><em>Mains</em> &middot; 18 Jun 2027</p>
-        <div class="countdown-grid">
-          <div class="cd-unit"><strong data-cd="days">--</strong><span>Days to go</span></div>
-        </div>
-        <p class="countdown-done" hidden>Mains is here — all the best!</p>
-      </div>
+/* ---- Exam dates (IST calendar) ---- */
+const EXAMS=[
+  {name:"Prelims", date:"2027-01-31", label:"31 Jan 2027"},
+  {name:"Mains",   date:"2027-06-18", label:"18 Jun 2027"}
+];
 
+const STAGES={pre:"Stage I (Prelims)",c:"Stage II Conventional"};
+const SYLL_NOTE="Structure: Stage I: GS & Engineering Aptitude (200) + Civil Engg Paper I & II (200 each), objective. Stage II: Civil Engg Paper I & II (300 each, conventional, 3 hrs). Stage III: Personality test (200). Topics are grouped by subject here; always cross-check with the latest UPSC notification.";
+const INT=[1,3,7,21,45,90];
+const iso=d=>d.toISOString().slice(0,10);
+const today=()=>iso(new Date());
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let st;try{st=JSON.parse(localStorage.getItem('sd')||'{}')}catch(e){st={}}
+st.done=st.done||{};
+st.pyq=st.pyq||[];
+st.exam=st.exam||"";
+const save=()=>{try{localStorage.setItem('sd',JSON.stringify(st))}catch(e){}};
+const TABS=[["dash","Dashboard"],["syl","Syllabus"],["notes","Notes"],["form","Formulas"],["pyq","PYQ"],["rev","Revision"],["qcab","QCAB"],["sync","Sync"]];
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return iso(x)};
+
+/* ---- IST days-remaining helpers ---- */
+function istDateStr(d){
+  const parts = new Intl.DateTimeFormat("en-CA",{
+    timeZone:"Asia/Kolkata", year:"numeric", month:"2-digit", day:"2-digit"
+  }).formatToParts(d);
+  const y = parts.find(p=>p.type==='year').value;
+  const m = parts.find(p=>p.type==='month').value;
+  const dd = parts.find(p=>p.type==='day').value;
+  return y+"-"+m+"-"+dd;
+}
+function daysUntilIST(targetISO){
+  const a = Date.parse(istDateStr(new Date())+"T00:00:00Z");
+  const b = Date.parse(targetISO+"T00:00:00Z");
+  return Math.round((b-a)/86400000);
+}
+
+function dueList(){
+  const o=[];
+  SUB.forEach((s,i)=>s.t.split(";").forEach((t,j)=>{
+    const r=st.done[i+"."+j];
+    if(r){
+      const due=addDays(r.d,INT[Math.min(r.s,INT.length-1)]);
+      o.push({i,j,t,s:s.n,due,od:due<=today()});
+    }
+  }));
+  return o.sort((a,b)=>a.due<b.due?-1:1);
+}
+function pct(i){
+  const n=SUB[i].t.split(";").length;
+  let c=0;
+  for(let j=0;j<n;j++) if(st.done[i+"."+j]) c++;
+  return [c,n];
+}
+
+function renderCountdowns(){
+  const counts = EXAMS.map(e => ({name:e.name, label:e.label, d:daysUntilIST(e.date)}));
+  const upcoming = counts.filter(x=>x.d>0).sort((a,b)=>a.d-b.d);
+  const nearest = upcoming.length ? upcoming[0].name : null;
+  return counts.map(x=>{
+    const done   = x.d <= 0;
+    const urgent = x.d > 0 && x.d < 30;
+    const isNext = x.name === nearest;
+    return `<div class="countdown ${done?'is-past':''} ${urgent?'urgent':''} ${isNext?'is-next':''}">
+      <div class="cd-label">${x.name} · ${x.label}</div>
+      ${done
+        ? `<div class="cd-done">${x.name} is here — all the best!</div>`
+        : `<div class="cd-num">${x.d}</div><div class="cd-sub">Days to go · IST</div>`}
+    </div>`;
+  }).join("");
+}
+
+const V={
+dash(){
+  let tc=0,td=0;
+  const rows=SUB.map((s,i)=>{
+    const[c,n]=pct(i);tc+=c;td+=n;
+    return`<div class="card"><b class="sans">${esc(s.n)}</b><div class="bar"><i style="width:${c/n*100}%"></i></div><small>${c} of ${n} topics studied</small></div>`
+  }).join("");
+  const due=dueList().filter(x=>x.od).length;
+  const dl=st.exam?Math.ceil((new Date(st.exam)-new Date(today()))/864e5):null;
+  return `<h2>Dashboard</h2>
+    <p class="sub">Your IES civil preparation at a glance. Countdowns use Indian Standard Time (Asia/Kolkata).</p>
+    <div class="countdowns">${renderCountdowns()}</div>
+    <div class="grid">
+      <div class="card"><h3>${tc}/${td}</h3>topics studied (${Math.round(tc/td*100)}%)</div>
+      <div class="card"><h3>${due}</h3>revisions due <a href="#rev">Open revision</a></div>
+      <div class="card"><label>Custom deadline (optional)</label><input type="date" id="exam" value="${st.exam}">${dl!==null?`<h3>${dl} days left</h3>`:""}</div>
     </div>
-  </section>
-
-  <!-- ===== STATS ===== -->
-  <div class="stats">
-    <div class="stat"><strong>6+</strong><span>Subjects</span></div>
-    <div class="stat"><strong>10</strong><span>Years of PYQs</span></div>
-    <div class="stat"><strong>20+</strong><span>Formula Sheets</span></div>
-    <div class="stat"><strong>100%</strong><span>Free &amp; Open</span></div>
-  </div>
-
-  <!-- ===== SUBJECTS ===== -->
-  <section id="subjects">
-    <h2>Subject-Wise Notes</h2>
-    <div class="cards">
-      <div class="card">
-        <h3>Structural Analysis</h3>
-        <p>Determinate beams, trusses and frames, SFD &amp; BMD, influence lines,
-           unit load method.</p>
-        <a href="#">Open notes &rarr;</a>
-      </div>
-      <div class="card">
-        <h3>RCC Design</h3>
-        <p>Limit state method, IS 456 provisions, singly &amp; doubly reinforced
-           beams, slabs, columns.</p>
-        <a href="#">Open notes &rarr;</a>
-      </div>
-      <div class="card">
-        <h3>Steel Design</h3>
-        <p>IS 800 provisions, bolted &amp; welded connections, tension and
-           compression members.</p>
-        <a href="#">Open notes &rarr;</a>
-      </div>
-      <div class="card">
-        <h3>Geotechnical Engineering</h3>
-        <p>Index properties, permeability, shear strength, bearing capacity,
-           shallow &amp; deep foundations.</p>
-        <a href="#">Open notes &rarr;</a>
-      </div>
-      <div class="card">
-        <h3>Fluid Mechanics</h3>
-        <p>Fluid properties, Bernoulli's equation, flow through pipes, hydraulic
-           machines and turbines.</p>
-        <a href="#">Open notes &rarr;</a>
-      </div>
-      <div class="card">
-        <h3>Previous Year Questions</h3>
-        <p>Topic-tagged ESE prelims and mains questions with solutions and
-           difficulty ratings.</p>
-        <a href="#">Open PYQs &rarr;</a>
-      </div>
+    <h3>Subject progress</h3>
+    <div class="grid">${rows}</div>`;
+},
+syl(){
+  return `<h2>IES Civil Syllabus</h2><p class="sub">${SYLL_NOTE}</p>`+
+    SUB.map((s,i)=>`<details><summary>${esc(s.n)} (${pct(i)[0]}/${pct(i)[1]})</summary><div>${
+      s.t.split(";").map((t,j)=>`<label class="t" style="font-weight:400;color:inherit;margin:0"><input type="checkbox" data-t="${i}.${j}" ${st.done[i+"."+j]?"checked":""}> ${esc(t)}</label>`).join("")
+    }</div></details>`).join("")+
+    `<p class="sub">Ticking a topic adds it to your revision schedule (1, 3, 7, 21, 45, 90 days).</p>`;
+},
+notes(){
+  return `<h2>Short notes</h2><p class="sub">One-minute summary per subject.</p><div class="grid">${
+    SUB.map(s=>`<div class="card"><h3>${esc(s.n)}</h3><p>${esc(s.note)}</p></div>`).join("")
+  }</div>`;
+},
+form(){
+  return `<h2>Formula sheet</h2><p class="sub">Search or print this page as your quick reference.</p>
+    <div class="row noprint"><input id="fq" placeholder="Search formulas (e.g. Mohr, Manning)"><button onclick="print()">Print sheet</button></div>
+    <div class="grid" id="fg">${SUB.map(s=>`<div class="card fc"><h3>${esc(s.n)}</h3>${s.f.map(x=>`<div class="f">${esc(x)}</div>`).join("")}</div>`).join("")}</div>`;
+},
+pyq(){
+  const sel=SUB.map((s,i)=>`<option value="${i}">${esc(s.n)}</option>`).join("");
+  return `<h2>Previous year questions</h2><p class="sub">Add questions from the official papers and track which ones you have solved. Import a CSV or JSON in Sync.</p>
+    <div class="card"><div class="row">
+      <div><label>Year</label><input id="py" type="number" value="2024"></div>
+      <div><label>Paper</label><select id="pp"><option>Prelims</option><option>Mains P1</option><option>Mains P2</option></select></div>
+      <div><label>Marks</label><select id="pm"><option>6</option><option>8</option><option>12</option><option>20</option><option>2</option></select></div>
+      <div><label>Subject</label><select id="ps">${sel}</select></div>
     </div>
-  </section>
-
-  <!-- ===== RESOURCES ===== -->
-  <section id="resources">
-    <h2>Quick Resources</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Resource</th>
-          <th>Best For</th>
-          <th>When to Use</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><a href="#">Formula Sheets</a></td>
-          <td>Last-minute revision</td>
-          <td>Final 2 weeks</td>
-        </tr>
-        <tr>
-          <td><a href="#">Topic-Wise PYQs</a></td>
-          <td>Understanding question patterns</td>
-          <td>Throughout preparation</td>
-        </tr>
-        <tr>
-          <td><a href="#">Solved Examples</a></td>
-          <td>Building numerical speed</td>
-          <td>After each topic</td>
-        </tr>
-        <tr>
-          <td><a href="#">Mock Tests</a></td>
-          <td>Time management</td>
-          <td>Final 2 months</td>
-        </tr>
-        <tr>
-          <td><a href="landing.html">Study Plan</a></td>
-          <td>Weekly scheduling</td>
-          <td>Day 1 onwards</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="notice">
-      <strong>Note:</strong> This is an independent study resource and is not
-      affiliated with UPSC. Exam dates shown are <strong>31 January 2027
-      (Prelims)</strong> and <strong>18 June 2027 (Mains)</strong>. Countdowns
-      use Indian Standard Time (Asia/Kolkata). Always verify against the latest
-      official notification.
+    <label>Question</label><textarea id="pt" rows="3"></textarea>
+    <p><button id="padd">Add question</button></p></div>
+    <div class="row noprint"><input id="pf" placeholder="Filter by text, year, subject"></div>
+    <div class="scroll"><table id="pl"></table></div>`;
+},
+rev(){
+  const l=dueList();
+  return `<h2>Revision</h2><p class="sub">Topics come back on a spaced schedule. Mark one revised to push it further out.</p>`+
+    (l.length
+      ? `<div class="scroll"><table><tr><th>Topic</th><th>Subject</th><th>Due</th><th></th></tr>${
+          l.map(x=>`<tr><td>${esc(x.t)}</td><td>${esc(x.s)}</td><td>${x.od?'<span class="tag" style="border-color:var(--hi)">due</span>':x.due}</td><td><button class="alt" data-r="${x.i}.${x.j}">Revised</button></td></tr>`).join("")
+        }</table></div>`
+      : `<div class="card">Nothing scheduled yet. Tick topics in <a href="#syl">Syllabus</a> as you finish them.</div>`);
+},
+qcab(){
+  return `<h2>QCAB generator</h2><p class="sub">Answer sheets in UPSC style: 6 and 8 marks = 2 pages, 12 marks = 3, 20 marks = 4. A4, red margin lines, ruled body.</p>
+    <div class="card noprint"><div class="row">
+      <div><label>Marks</label><select id="qm"><option value="6">6 marks (2 pages)</option><option value="8">8 marks (2 pages)</option><option value="12">12 marks (3 pages)</option><option value="20">20 marks (4 pages)</option></select></div>
+      <div><label>Question no.</label><input id="qn" value="1"></div>
+      <div><label>Subject</label><input id="qs" value="Civil Engineering Paper I"></div>
+      <div><label>Roll no. (optional)</label><input id="qr"></div>
     </div>
-  </section>
+    <label>Question text (printed in a box on page 1)</label><textarea id="qt" rows="3"></textarea>
+    <p class="row"><button id="qg">Generate</button><button class="alt" onclick="print()">Print / save as PDF</button></p>
+    <small>In the print dialog set margins to None and turn off headers and footers.</small></div>
+    <div id="out"></div>`;
+},
+sync(){
+  return `<h2>Sync and backup</h2><p class="sub">Free options, no server needed.</p>
+    <div class="card"><h3>1. File backup</h3>
+      <p>Export a JSON file and keep it in Google Drive or your repo. Import it on any device.</p>
+      <p class="row"><button id="ex">Export data</button><input type="file" id="im" accept=".json"></p></div>
+    <div class="card"><h3>2. GitHub Gist sync (free)</h3>
+      <p>Create a token with only the <b>gist</b> scope at github.com/settings/tokens. This works when the site runs on your own domain such as GitHub Pages.</p>
+      <label>Token</label><input id="gt" type="password" value="${esc(st.gt||"")}">
+      <label>Gist id (blank for first push)</label><input id="gi" value="${esc(st.gi||"")}">
+      <p class="row"><button id="gp">Push</button><button class="alt" id="gl">Pull</button></p>
+      <p id="gm" class="sub"></p></div>
+    <div class="card"><h3>3. Later upgrade</h3>For live multi-device sync with login, Supabase or Firebase free tiers work well.</div>`;
+}};
 
-  <!-- ===== FOOTER ===== -->
-  <footer>
-    <p>&copy; 2026 Statically Determinate &mdash; Engineering Services Exam Prep.</p>
-    <p><a href="landing.html">Study Plan</a> · <a href="#subjects">Subjects</a></p>
-  </footer>
+const $=s=>document.querySelector(s), $n=$("#nav"), $m=$("#main");
 
-  <script src="countdown.js"></script>
+function nav(){
+  const h=(location.hash||"#dash").slice(1);
+  const k=V[h]?h:"dash";
+  $n.innerHTML=TABS.map(([a,b])=>`<a href="#${a}" class="${a==k?"on":""}">${b}</a>`).join("");
+  $m.innerHTML=`<section class="view" id="v-${k}">${V[k]()}</section>`;
+  bind(k);
+  window.scrollTo(0,0);
+}
+
+function bind(k){
+  if(k=="dash") $("#exam").onchange=e=>{st.exam=e.target.value;save();nav()};
+
+  if(k=="syl") document.querySelectorAll("[data-t]").forEach(c=>c.onchange=()=>{
+    if(c.checked) st.done[c.dataset.t]={d:today(),s:0};
+    else delete st.done[c.dataset.t];
+    save();
+  });
+
+  if(k=="form") $("#fq").oninput=e=>{
+    const q=e.target.value.toLowerCase();
+    document.querySelectorAll(".fc").forEach(c=>c.style.display=c.textContent.toLowerCase().includes(q)?"":"none");
+  };
+
+  if(k=="rev") document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{
+    const r=st.done[b.dataset.r]; r.d=today(); r.s++; save(); nav();
+  });
+
+  if(k=="pyq"){
+    const draw=()=>{
+      const q=($("#pf").value||"").toLowerCase();
+      $("#pl").innerHTML="<tr><th>Year</th><th>Paper</th><th>Marks</th><th>Question</th><th>Solved</th><th></th></tr>"+
+        st.pyq.map((p,i)=>({p,i}))
+          .filter(({p})=>(p.y+p.pp+SUB[p.s].n+p.q).toLowerCase().includes(q))
+          .map(({p,i})=>`<tr><td>${p.y}</td><td>${esc(p.pp)}</td><td>${p.m}</td><td>${esc(p.q)}<br><span class="tag">${esc(SUB[p.s].n)}</span></td><td><input type="checkbox" data-s="${i}" ${p.ok?"checked":""}></td><td><button class="alt" data-x="${i}">Delete</button></td></tr>`).join("");
+      document.querySelectorAll("[data-s]").forEach(c=>c.onchange=()=>{st.pyq[c.dataset.s].ok=c.checked;save()});
+      document.querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{st.pyq.splice(b.dataset.x,1);save();draw()});
+    };
+    $("#pf").oninput=draw;
+    $("#padd").onclick=()=>{
+      const q=$("#pt").value.trim(); if(!q)return;
+      st.pyq.push({y:$("#py").value,pp:$("#pp").value,m:$("#pm").value,s:+$("#ps").value,q,ok:false});
+      $("#pt").value=""; save(); draw();
+    };
+    draw();
+  }
+
+  if(k=="qcab") $("#qg").onclick=()=>{
+    const m=+$("#qm").value, n={6:2,8:2,12:3,20:4}[m];
+    let h="";
+    for(let p=1;p<=n;p++) h+=`<div class="sheet"><i class="m1"></i><i class="m2"></i><i class="rm"></i><div class="hd"><div><span>${esc($("#qs").value)}</span><span>Roll No: ${esc($("#qr").value)||"__________"}</span></div><div><span>Q. ${esc($("#qn").value)}</span><span>${m} marks</span><span>Page ${p} of ${n}</span></div></div><div class="lines"></div>${p==1&&$("#qt").value.trim()?`<div class="q">${esc($("#qt").value)}</div>`:""}<div class="pn">${p} / ${n}</div></div>`;
+    $("#out").innerHTML=h;
+  };
+
+  if(k=="sync"){
+    $("#ex").onclick=()=>{
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(new Blob([JSON.stringify(st)],{type:"application/json"}));
+      a.download="sd-backup-"+today()+".json";
+      a.click();
+    };
+    $("#im").onchange=e=>{
+      const r=new FileReader();
+      r.onload=()=>{
+        try{
+          st=Object.assign({done:{},pyq:[]},JSON.parse(r.result));
+          save(); $("#gm").textContent=""; alert("Imported");
+        }catch(x){ alert("Not a valid backup file"); }
+      };
+      r.readAsText(e.target.files[0]);
+    };
+    const msg=t=>$("#gm").textContent=t;
+    const H=()=>({Authorization:"Bearer "+$("#gt").value,Accept:"application/vnd.github+json"});
+    $("#gp").onclick=async()=>{
+      try{
+        st.gt=$("#gt").value;
+        const body={description:"Statically Determinate backup",public:false,files:{"sd.json":{content:JSON.stringify({...st,gt:undefined})}}};
+        const id=$("#gi").value;
+        const r=await fetch("https://api.github.com/gists"+(id?"/"+id:""),{method:id?"PATCH":"POST",headers:H(),body:JSON.stringify(body)});
+        const j=await r.json(); if(!r.ok) throw new Error(j.message);
+        st.gi=j.id; save(); $("#gi").value=j.id; msg("Pushed. Gist id: "+j.id);
+      }catch(e){ msg("Push failed: "+e.message); }
+    };
+    $("#gl").onclick=async()=>{
+      try{
+        const r=await fetch("https://api.github.com/gists/"+$("#gi").value,{headers:H()});
+        const j=await r.json(); if(!r.ok) throw new Error(j.message);
+        const d=JSON.parse(j.files["sd.json"].content);
+        st=Object.assign(st,d); save(); msg("Pulled latest data.");
+      }catch(e){ msg("Pull failed: "+e.message); }
+    };
+  }
+}
+
+addEventListener("hashchange",nav);
+nav();
+updateThemeBtn();
+</script>
 </body>
 </html>
