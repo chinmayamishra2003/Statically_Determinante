@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Plan | Statically Determinate</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <style>
+    :root {
+      --navy: #1a3a5c;
+      --orange: #e67e22;
+      --light: #f4f7fa;
+      --text: #2c3e50;
+      --muted: #5b6b7c;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .topbar {
+      background: var(--navy);
+      padding: 0.8rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .topbar img { height: 48px; }
+
+    .topbar a { color: #fff; text-decoration: none; font-size: 0.9rem; }
+    .topbar a:hover { color: var(--orange); }
+
+    .hero {
+      background: var(--light);
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.3rem;
+      color: var(--navy);
+      margin-bottom: 0.9rem;
+    }
+
+    .hero h1 em { font-style: normal; color: var(--orange); }
+
+    .hero p {
+      max-width: 680px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    section {
+      max-width: 1000px;
+      margin: 3.5rem auto;
+      padding: 0 2rem;
+    }
+
+    section h2 {
+      font-size: 1.5rem;
+      color: var(--navy);
+      border-left: 5px solid var(--orange);
+      padding-left: 0.9rem;
+      margin-bottom: 1.4rem;
+    }
+
+    /* Phases */
+    .phases {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.4rem;
+      counter-reset: phase;
+    }
+
+    .phase {
+      background: var(--light);
+      padding: 1.4rem;
+      border-radius: 6px;
+      border-left: 4px solid var(--navy);
+    }
+
+    .phase::before {
+      counter-increment: phase;
+      content: "Phase " counter(phase);
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--orange);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+    }
+
+    .phase h3 {
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 0.4rem;
+    }
+
+    .phase p { font-size: 0.88rem; color: var(--muted); }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 14px rgba(0,0,0,0.06);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eef2f6;
+    }
+
+    th {
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    .tag {
+      display: inline-block;
+      background: #fff2e2;
+      color: #b35e10;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* FAQ */
+    .faq p {
+      margin-bottom: 1rem;
+      font-size: 0.92rem;
+    }
+
+    .faq strong { color: var(--navy); }
+
+    /* CTA */
+    .cta {
+      background: var(--navy);
+      color: #fff;
+      text-align: center;
+      padding: 3.5rem 2rem;
+      margin-top: 3.5rem;
+    }
+
+    .cta h2 {
+      color: #fff;
+      border: none;
+      font-size: 1.7rem;
+      margin-bottom: 0.8rem;
+      padding: 0;
+    }
+
+    .cta p { opacity: 0.9; margin-bottom: 1.5rem; }
+
+    .cta a {
+      display: inline-block;
+      background: var(--orange);
+      color: #fff;
+      padding: 0.8rem 2rem;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .cta a:hover { background: #cf6d17; }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      color: #888;
+    }
+
+    footer a { color: var(--orange); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <img src="logo.svg" alt="Statically Determinate" />
+    <a href="index.html">&larr; Back to Dashboard</a>
+  </div>
+
+  <div class="hero">
+    <h1>A <em>Determinate</em> Study Plan</h1>
+    <p>
+      No guesswork, no endless scrolling. Follow a clear four-phase plan built
+      around the ESE syllabus, with revision cycles and mock-test checkpoints.
+    </p>
+  </div>
+
+  <!-- Phases -->
+  <section>
+    <h2>Four-Phase Approach</h2>
+    <div class="phases">
+      <div class="phase">
+        <h3>Build the Base</h3>
+        <p>Cover the full syllabus once. Focus on concepts, derivations and
+           standard textbook problems.</p>
+      </div>
+      <div class="phase">
+        <h3>Practice PYQs</h3>
+        <p>Solve 10 years of previous-year questions, topic by topic, and log
+           every mistake.</p>
+      </div>
+      <div class="phase">
+        <h3>Speed &amp; Accuracy</h3>
+        <p>Timed sectional tests. Aim to cut solving time while keeping accuracy
+           above 85%.</p>
+      </div>
+      <div class="phase">
+        <h3>Revise &amp; Peak</h3>
+        <p>Formula sheets, error log, and full-length mocks under exam
+           conditions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Weightage -->
+  <section>
+    <h2>Subject Priority (Civil Engineering)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Relative Weight</th>
+          <th>Suggested Effort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Structural Analysis</td>
+          <td><span class="tag">High</span></td>
+          <td>Core — build early, revise often</td>
+        </tr>
+        <tr>
+          <td>RCC Design</td>
+          <td><span class="tag">High</span></td>
+          <td>Code-based, memorise IS 456 clauses</td>
+        </tr>
+        <tr>
+          <td>Steel Design</td>
+          <td><span class="tag">Medium</span></td>
+          <td>Pair with RCC for a design block</td>
+        </tr>
+        <tr>
+          <td>Geotechnical Engineering</td>
+          <td><span class="tag">High</span></td>
+          <td>Formula-heavy — daily short revision</td>
+        </tr>
+        <tr>
+          <td>Fluid Mechanics</td>
+          <td><span class="tag">Medium</span></td>
+          <td>Numerical practice is essential</td>
+        </tr>
+        <tr>
+          <td>General Studies &amp; Aptitude</td>
+          <td><span class="tag">Medium</span></td>
+          <td>Short daily sessions, no cramming</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <h2>Common Questions</h2>
+    <p>
+      <strong>How many hours should I study daily?</strong><br />
+      Consistency beats volume. Four focused hours with active recall is more
+      effective than eight passive hours.
+    </p>
+    <p>
+      <strong>Should I finish the syllabus before starting PYQs?</strong><br />
+      No. Solve PYQs for each topic immediately after studying it — this locks
+      in the question pattern.
+    </p>
+    <p>
+      <strong>How many revisions are realistic?</strong><br />
+      Plan for at least three: one full, one focused on weak areas, and one
+      formula-sheet-only pass in the final month.
+    </p>
+    <p>
+      <strong>Are these notes enough on their own?</strong><br />
+      They are a revision aid. Pair them with at least one standard textbook per
+      subject and the official syllabus.
+    </p>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h2>Start with the subject notes</h2>
+    <p>Everything is free, open, and organised by topic.</p>
+    <a href="index.html#subjects">Go to Dashboard</a>
+  </div>
+
+  <footer>
+    <p>
+      &copy; 2026 Statically Determinate &mdash;
+      <a href="index.html">Home</a> ·
+      <a href="index.html#resources">Resources</a>
+    </p>
+  </footer>
+
+</body>
+</html>
