@@ -96,6 +96,14 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:
   .cd-num{font-size:44px}
 }
 
+/* Formula images */
+.fimgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:8px 0}
+.fimg{margin:0;border:1px solid var(--line);padding:4px;background:var(--bg);break-inside:avoid}
+.fimg img{width:100%;height:auto;display:block;background:#fff}
+.fimg figcaption{font:600 12px Archivo,sans-serif;color:var(--mut);padding:4px 2px}
+.fimg button{font-size:12px;padding:3px 8px;margin:2px}
+.addimg[hidden]{display:none}
+
 /* QCAB */
 #out{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:16px}
 .sheet{width:210mm;height:297mm;background:#fff;color:#111;position:relative;box-shadow:0 1px 8px rgba(0,0,0,.25);overflow:hidden;font-family:'Source Serif 4',serif;flex:none}
@@ -278,9 +286,10 @@ notes(){
   }</div>`;
 },
 form(){
-  return `<h2>Formula sheet</h2><p class="sub">Search or print this page as your quick reference.</p>
-    <div class="row noprint"><input id="fq" placeholder="Search formulas (e.g. Mohr, Manning)"><button onclick="print()">Print sheet</button></div>
-    <div class="grid" id="fg">${SUB.map(s=>`<div class="card fc"><h3>${esc(s.n)}</h3>${s.f.map(x=>`<div class="f">${esc(x)}</div>`).join("")}</div>`).join("")}</div>`;
+  return `<h2>Formula sheet</h2><p class="sub">Search or print this page. Images are stored in the public library, so everyone sees them.</p>
+    <div class="row noprint"><input id="fq" placeholder="Search formulas or image captions"><button onclick="print()">Print sheet</button></div>
+    <p id="fm" class="sub noprint"></p><input type="file" id="fi" accept="image/*" hidden>
+    <div class="grid" id="fg">${SUB.map((s,i)=>`<div class="card fc"><h3>${esc(s.n)}</h3>${s.f.map(x=>`<div class="f">${esc(x)}</div>`).join("")}<div class="fimgs" data-sub="${i}"></div><button class="alt noprint addimg" data-add="${i}" hidden>+ Add image</button></div>`).join("")}</div>`;
 },
 pyq(){
   const sel=SUB.map((s,i)=>`<option value="${i}">${esc(s.n)}</option>`).join("");
@@ -329,8 +338,105 @@ sync(){
       <label>Gist id (blank for first push)</label><input id="gi" value="${esc(st.gi||"")}">
       <p class="row"><button id="gp">Push</button><button class="alt" id="gl">Pull</button></p>
       <p id="gm" class="sub"></p></div>
-    <div class="card"><h3>3. Later upgrade</h3>For live multi-device sync with login, Supabase or Firebase free tiers work well.</div>`;
+    <div class="card"><h3>3. Public cloud library (images and shared data)</h3>
+      <p>Uses this GitHub repo as free public storage, so every visitor can see the images. Only you can add or delete: create a fine-grained token at github.com/settings/personal-access-tokens for this repo only, with Contents: Read and write. The token stays in this browser and is never exported.</p>
+      <label>Repo (owner/name)</label><input id="cr" value="${esc(CFG().repo)}">
+      <label>Branch</label><input id="cb" value="${esc(CFG().branch)}">
+      <label>Token</label><input id="ct" type="password" value="${esc(CFG().tok)}">
+      <p class="row"><button id="cs">Save</button><button class="alt" id="cp">Publish my PYQs</button><button class="alt" id="cl">Load shared PYQs</button></p>
+      <p id="cm" class="sub"></p></div>
+    <div class="card"><h3>4. Later upgrade</h3>For live multi-device sync with login, Supabase or Firebase free tiers work well.</div>`;
 }};
+
+/* ---- Cloud library: the public GitHub repo is the free storage ---- */
+const CFG=()=>Object.assign({repo:"chinmayamishra2003/Statically_Determinante",branch:"main",tok:""},st.cloud||{});
+let LIB={items:[],sha:null};const PREV={};
+const ghH=()=>({Authorization:"Bearer "+CFG().tok,Accept:"application/vnd.github+json"});
+const api=p=>"https://api.github.com/repos/"+CFG().repo+"/contents/"+p;
+const b64=t=>{let b="";new TextEncoder().encode(t).forEach(c=>b+=String.fromCharCode(c));return btoa(b)};
+const unb64=t=>new TextDecoder().decode(Uint8Array.from(atob(t.replace(/\s/g,"")),c=>c.charCodeAt(0)));
+const fmsg=t=>{const e=document.querySelector("#fm");if(e)e.textContent=t};
+async function ghPut(path,content,sha,message){
+  const r=await fetch(api(path),{method:"PUT",headers:ghH(),body:JSON.stringify({message,content,branch:CFG().branch,...(sha?{sha}:{})})});
+  const j=await r.json();
+  if(!r.ok){const e=new Error(j.message||r.status);e.status=r.status;throw e}
+  return j;
+}
+async function loadLib(){
+  try{
+    if(CFG().tok){
+      const r=await fetch(api("data/library.json")+"?ref="+CFG().branch,{headers:ghH()});
+      if(r.status==404){LIB={items:[],sha:null};return}
+      const j=await r.json(); if(!r.ok)throw new Error(j.message);
+      LIB={items:JSON.parse(unb64(j.content)).items||[],sha:j.sha};
+    }else{
+      const r=await fetch("data/library.json?t="+Date.now());
+      LIB={items:r.ok?((await r.json()).items||[]):[],sha:null};
+    }
+  }catch(e){fmsg("Could not load library: "+e.message)}
+}
+async function saveLib(fn){
+  for(let n=0;n<2;n++){
+    await loadLib();
+    const items=fn(LIB.items.slice());
+    try{
+      const j=await ghPut("data/library.json",b64(JSON.stringify({v:1,items})),LIB.sha,"Update library");
+      LIB={items,sha:j.content.sha};return;
+    }catch(e){if(n||e.status!=409)throw e}
+  }
+}
+function shrink(file,max=1600){
+  return new Promise((ok,no)=>{
+    const im=new Image(),u=URL.createObjectURL(file);
+    im.onload=()=>{
+      const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");
+      c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+      URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",.85));
+    };
+    im.onerror=()=>no(new Error("Could not read this image"));im.src=u;
+  });
+}
+async function addImg(file,sub,title){
+  const url=await shrink(file),id=Date.now().toString(36),path="uploads/formulas/"+id+".jpg";
+  await ghPut(path,url.split(",")[1],null,"Add formula image");
+  PREV[id]=url;
+  await saveLib(a=>a.concat({id,sub,title,path,t:today()}));
+}
+async function delImg(id){
+  const x=LIB.items.find(i=>i.id==id);if(!x)return;
+  const r=await fetch(api(x.path)+"?ref="+CFG().branch,{headers:ghH()});
+  if(r.ok){
+    const j=await r.json();
+    const d=await fetch(api(x.path),{method:"DELETE",headers:ghH(),body:JSON.stringify({message:"Delete formula image",sha:j.sha,branch:CFG().branch})});
+    if(!d.ok)throw new Error((await d.json()).message);
+  }
+  await saveLib(a=>a.filter(i=>i.id!=id));
+}
+function drawImgs(){
+  const owner=!!CFG().tok;
+  document.querySelectorAll(".fimgs").forEach(box=>{
+    box.innerHTML=LIB.items.filter(x=>x.sub==box.dataset.sub).map(x=>{
+      const u=esc(PREV[x.id]||x.path);
+      return `<figure class="fimg"><a href="${u}" target="_blank" rel="noopener"><img loading="lazy" src="${u}" alt="${esc(x.title||"Formula image")}"></a>${x.title?`<figcaption>${esc(x.title)}</figcaption>`:""}${owner?`<button class="alt noprint" data-del="${esc(x.id)}">Delete</button>`:""}</figure>`;
+    }).join("");
+  });
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Delete this image for everyone?"))return;
+    try{fmsg("Deleting…");await delImg(b.dataset.del);fmsg("");drawImgs()}catch(x){fmsg("Delete failed: "+x.message)}
+  });
+}
+async function formLib(){
+  const fi=document.querySelector("#fi");
+  document.querySelectorAll(".addimg").forEach(b=>{b.hidden=!CFG().tok;b.onclick=()=>{fi.dataset.sub=b.dataset.add;fi.click()}});
+  fi.onchange=async e=>{
+    const f=e.target.files[0];e.target.value="";if(!f)return;
+    const t=prompt("Caption for this image (optional)")||"";
+    try{fmsg("Uploading…");await addImg(f,+fi.dataset.sub,t);fmsg("Uploaded. Other visitors see it after the site rebuilds (about a minute).");drawImgs()}
+    catch(x){fmsg("Upload failed: "+x.message)}
+  };
+  fmsg("Loading images…");await loadLib();if(document.querySelector("#fm")&&document.querySelector("#fm").textContent=="Loading images…")fmsg("");drawImgs();
+}
 
 const $=s=>document.querySelector(s), $n=$("#nav"), $m=$("#main");
 
@@ -352,10 +458,13 @@ function bind(k){
     save();
   });
 
-  if(k=="form") $("#fq").oninput=e=>{
-    const q=e.target.value.toLowerCase();
-    document.querySelectorAll(".fc").forEach(c=>c.style.display=c.textContent.toLowerCase().includes(q)?"":"none");
-  };
+  if(k=="form"){
+    $("#fq").oninput=e=>{
+      const q=e.target.value.toLowerCase();
+      document.querySelectorAll(".fc").forEach(c=>c.style.display=(c.textContent+" "+[...c.querySelectorAll("img")].map(i=>i.alt).join(" ")).toLowerCase().includes(q)?"":"none");
+    };
+    formLib();
+  }
 
   if(k=="rev") document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{
     const r=st.done[b.dataset.r]; r.d=today(); r.s++; save(); nav();
@@ -390,7 +499,7 @@ function bind(k){
   if(k=="sync"){
     $("#ex").onclick=()=>{
       const a=document.createElement("a");
-      a.href=URL.createObjectURL(new Blob([JSON.stringify(st)],{type:"application/json"}));
+      a.href=URL.createObjectURL(new Blob([JSON.stringify({...st,cloud:undefined,gt:undefined})],{type:"application/json"}));
       a.download="sd-backup-"+today()+".json";
       a.click();
     };
@@ -398,18 +507,37 @@ function bind(k){
       const r=new FileReader();
       r.onload=()=>{
         try{
-          st=Object.assign({done:{},pyq:[]},JSON.parse(r.result));
+          st=Object.assign({done:{},pyq:[],cloud:st.cloud},JSON.parse(r.result),{cloud:st.cloud});
           save(); $("#gm").textContent=""; alert("Imported");
         }catch(x){ alert("Not a valid backup file"); }
       };
       r.readAsText(e.target.files[0]);
+    };
+    const cm=t=>$("#cm").textContent=t;
+    $("#cs").onclick=()=>{st.cloud={repo:$("#cr").value.trim(),branch:$("#cb").value.trim()||"main",tok:$("#ct").value.trim()};save();cm("Saved on this device.")};
+    $("#cp").onclick=async()=>{
+      try{
+        if(!CFG().tok)throw new Error("save a token first");
+        const r=await fetch(api("data/shared.json")+"?ref="+CFG().branch,{headers:ghH()});
+        const sha=r.ok?(await r.json()).sha:null;
+        await ghPut("data/shared.json",b64(JSON.stringify({v:1,pyq:st.pyq})),sha,"Publish shared PYQs");
+        cm("Published. Visitors can load it after the site rebuilds.");
+      }catch(e){cm("Failed: "+e.message)}
+    };
+    $("#cl").onclick=async()=>{
+      try{
+        const r=await fetch("data/shared.json?t="+Date.now());if(!r.ok)throw new Error("nothing published yet");
+        const d=await r.json(),key=p=>[p.y,p.pp,p.q].join("|"),have=new Set(st.pyq.map(key));let n=0;
+        (d.pyq||[]).forEach(p=>{if(SUB[p.s]&&!have.has(key(p))){st.pyq.push(p);n++}});
+        save();cm(n+" new questions added.");
+      }catch(e){cm("Failed: "+e.message)}
     };
     const msg=t=>$("#gm").textContent=t;
     const H=()=>({Authorization:"Bearer "+$("#gt").value,Accept:"application/vnd.github+json"});
     $("#gp").onclick=async()=>{
       try{
         st.gt=$("#gt").value;
-        const body={description:"Statically Determinate backup",public:false,files:{"sd.json":{content:JSON.stringify({...st,gt:undefined})}}};
+        const body={description:"Statically Determinate backup",public:false,files:{"sd.json":{content:JSON.stringify({...st,gt:undefined,cloud:undefined})}}};
         const id=$("#gi").value;
         const r=await fetch("https://api.github.com/gists"+(id?"/"+id:""),{method:id?"PATCH":"POST",headers:H(),body:JSON.stringify(body)});
         const j=await r.json(); if(!r.ok) throw new Error(j.message);
