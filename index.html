@@ -111,7 +111,7 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:
 .sheet .bd{position:absolute;inset:8mm;border:.4mm solid #7a1f1f}
 .sheet small{font:600 6.5pt Archivo,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#555}
 .rb{display:inline-block;width:5.5mm;height:6.5mm;border:.3mm solid #444;margin-left:1mm;text-align:center;font:600 9pt/6.5mm Archivo,sans-serif;vertical-align:middle;font-style:normal}
-.sheet .l1,.sheet .l2{position:absolute;top:6mm;bottom:16mm;width:.35mm;background:#000}
+.sheet .l1,.sheet .l2{position:absolute;top:6mm;bottom:16mm;width:0;border-left:.35mm solid #000}
 .sheet .l1{left:23mm}.sheet .l2{left:185mm}
 .sheet .sec{position:absolute;left:23mm;width:162mm;top:8mm;text-align:center;font:700 10.5pt 'Source Serif 4',Georgia,serif}
 .sheet .ql{position:absolute;left:8mm;top:20mm;font:700 10.5pt 'Source Serif 4',Georgia,serif}
@@ -137,7 +137,10 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:
   body,main{background:#fff;padding:0;margin:0;max-width:none}
   .view:not(#v-qcab){display:none!important}
   #out{margin:0;gap:0;display:block}
-  .sheet{box-shadow:none;page-break-after:always;break-after:page}
+  .sheet{box-shadow:none;height:296mm;page-break-after:always;break-after:page}
+  .sheet:last-child{page-break-after:auto;break-after:auto}
+  .sheet,.sheet *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  html,body{background:none!important}
 }
 
 /* v3 modern */
