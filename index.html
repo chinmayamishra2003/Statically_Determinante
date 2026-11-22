@@ -207,7 +207,12 @@ h2{display:flex;align-items:center;gap:12px}h2::after{content:"";flex:1;height:1
   body.nv #scrim{display:block;position:fixed;inset:0;background:rgba(10,15,25,.45);z-index:65}
   main{padding-bottom:24px}#out{align-items:flex-start;overflow-x:auto;max-width:100vw}.trs{width:150px}
 }
-@media print{.tb,#scrim,#mb{display:none!important}}
+@media print{
+  .tb,#scrim,#mb{display:none!important}
+  main,.view{max-width:none!important;overflow:visible!important;padding:0!important;margin:0!important}
+  #out{display:block!important;max-width:none!important;overflow:visible!important;margin:0!important}
+  .sheet{width:210mm!important;margin:0!important;overflow:hidden}
+}
 </style>
 </head>
 <body>
