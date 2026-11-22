@@ -124,6 +124,35 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:
   #out{margin:0;gap:0;display:block}
   .sheet{box-shadow:none;page-break-after:always;break-after:page}
 }
+
+/* v3 modern */
+:root{--r:14px;--sh:0 1px 2px rgba(20,33,61,.06),0 8px 24px rgba(20,33,61,.07)}
+body{background:radial-gradient(900px 420px at 8% -8%,color-mix(in srgb,var(--acc) 14%,transparent),transparent),var(--bg)}
+header{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--card) 84%,transparent);backdrop-filter:blur(12px)}
+.mark{border-radius:10px;border:0}
+.card,details,.countdown,.fimg,.rv{border-radius:var(--r);box-shadow:var(--sh)}
+button,.btn,input,select,textarea{border-radius:10px}
+a.btn{display:inline-block;text-decoration:none;text-align:center;background:var(--ink);color:var(--bg);padding:8px 14px;font-weight:700;font-size:14px}
+a.btn.alt{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+nav a{border-radius:999px;border-bottom:0}nav a.on{background:var(--ink);color:var(--bg)}
+.hero{display:flex;gap:18px;align-items:center;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--sh);padding:20px;margin-bottom:18px}
+.ring{width:84px;height:84px;border-radius:50%;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;position:relative;flex:none}
+.ring:before{content:"";position:absolute;inset:8px;background:var(--card);border-radius:50%}.ring b{position:relative;font:800 18px Archivo,sans-serif}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px}.chip.on{background:var(--ink);color:var(--bg)}
+.rv{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;background:var(--card);border:1px solid var(--line);margin-bottom:8px}
+.dots i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--line);margin-right:3px}.dots i.on{background:var(--ok)}
+.ed button{font-size:12px;padding:2px 8px;margin-left:4px}
+.fimg select{width:auto;max-width:130px;font-size:12px;padding:3px}.fimg img{cursor:zoom-in}
+#pb{position:fixed;right:16px;bottom:84px;z-index:40;box-shadow:var(--sh);border-radius:999px;background:var(--hi);color:#14213d;padding:12px 18px}
+#lb{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:50;display:grid;place-items:center;overflow:auto;cursor:zoom-out}
+#lb img{max-width:96vw;max-height:94vh;background:#fff}
+@media(max-width:760px){
+  header{position:static;backdrop-filter:none}
+  nav{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;flex-wrap:nowrap;overflow-x:auto;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+  nav a{white-space:nowrap}main{padding-bottom:90px}
+}
+@media print{.ed,#pb{display:none!important}}
 </style>
 </head>
 <body>
@@ -286,9 +315,9 @@ notes(){
   }</div>`;
 },
 form(){
-  return `<h2>Formula sheet</h2><p class="sub">Search or print this page. Images are stored in the public library, so everyone sees them.</p>
+  return `<h2>Formula sheet</h2><p class="sub">Search or print this page. Add printed or scanned formula pages (drag and drop onto a subject, or use Add image). They are stored permanently in the repo and shown to everyone.</p>
     <div class="row noprint"><input id="fq" placeholder="Search formulas or image captions"><button onclick="print()">Print sheet</button></div>
-    <p id="fm" class="sub noprint"></p><input type="file" id="fi" accept="image/*" hidden>
+    <p id="fm" class="sub noprint"></p><input type="file" id="fi" accept="image/*" multiple hidden>
     <div class="grid" id="fg">${SUB.map((s,i)=>`<div class="card fc"><h3>${esc(s.n)}</h3>${s.f.map(x=>`<div class="f">${esc(x)}</div>`).join("")}<div class="fimgs" data-sub="${i}"></div><button class="alt noprint addimg" data-add="${i}" hidden>+ Add image</button></div>`).join("")}</div>`;
 },
 pyq(){
@@ -345,7 +374,7 @@ sync(){
       <label>Token</label><input id="ct" type="password" value="${esc(CFG().tok)}">
       <p class="row"><button id="cs">Save</button><button class="alt" id="cp">Publish my PYQs</button><button class="alt" id="cl">Load shared PYQs</button></p>
       <p id="cm" class="sub"></p></div>
-    <div class="card"><h3>4. Later upgrade</h3>For live multi-device sync with login, Supabase or Firebase free tiers work well.</div>`;
+    <div class="card"><h3>4. Is it permanent?</h3>Yes. Every image and every edit you publish is a git commit in your repo, and Cloudflare redeploys the site from it automatically. Browser data (ticks, your own notes, PYQs) lives only on that device, so export a backup now and then.</div>`;
 }};
 
 /* ---- Cloud library: the public GitHub repo is the free storage ---- */
@@ -385,24 +414,29 @@ async function saveLib(fn){
     }catch(e){if(n||e.status!=409)throw e}
   }
 }
-function shrink(file,max=1600){
+function shrink(file,max=2200){
   return new Promise((ok,no)=>{
     const im=new Image(),u=URL.createObjectURL(file);
     im.onload=()=>{
       const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");
       c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
       const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
-      URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",.85));
+      URL.revokeObjectURL(u);ok(c.toDataURL("image/jpeg",.88));
     };
     im.onerror=()=>no(new Error("Could not read this image"));im.src=u;
   });
 }
-async function addImg(file,sub,title){
-  const url=await shrink(file),id=Date.now().toString(36),path="uploads/formulas/"+id+".jpg";
-  await ghPut(path,url.split(",")[1],null,"Add formula image");
-  PREV[id]=url;
-  await saveLib(a=>a.concat({id,sub,title,path,t:today()}));
+async function addImgs(files,sub){
+  const add=[];
+  for(const f of files){
+    const url=await shrink(f),id=Date.now().toString(36)+Math.random().toString(36).slice(2,5),path="uploads/formulas/"+id+".jpg";
+    fmsg("Uploading "+(add.length+1)+"/"+files.length+"…");
+    await ghPut(path,url.split(",")[1],null,"Add formula image");
+    PREV[id]=url;add.push({id,sub,title:f.name.replace(/\.[^.]+$/,""),path,t:today()});
+  }
+  await saveLib(a=>a.concat(add));
 }
+const setImg=(id,p)=>saveLib(a=>a.map(x=>x.id==id?{...x,...p}:x));
 async function delImg(id){
   const x=LIB.items.find(i=>i.id==id);if(!x)return;
   const r=await fetch(api(x.path)+"?ref="+CFG().branch,{headers:ghH()});
@@ -414,28 +448,72 @@ async function delImg(id){
   await saveLib(a=>a.filter(i=>i.id!=id));
 }
 function drawImgs(){
-  const owner=!!CFG().tok;
+  const own=!!CFG().tok;
   document.querySelectorAll(".fimgs").forEach(box=>{
-    box.innerHTML=LIB.items.filter(x=>x.sub==box.dataset.sub).map(x=>{
-      const u=esc(PREV[x.id]||x.path);
-      return `<figure class="fimg"><a href="${u}" target="_blank" rel="noopener"><img loading="lazy" src="${u}" alt="${esc(x.title||"Formula image")}"></a>${x.title?`<figcaption>${esc(x.title)}</figcaption>`:""}${owner?`<button class="alt noprint" data-del="${esc(x.id)}">Delete</button>`:""}</figure>`;
+    const sub=box.dataset.sub,T=(SUB[sub]?SUB[sub].t:"").split(";");
+    box.innerHTML=LIB.items.filter(x=>x.sub==sub).map(x=>{
+      const u=esc(PREV[x.id]||x.path),i=esc(x.id);
+      return `<figure class="fimg"><img loading="lazy" data-lb="${u}" src="${u}" alt="${esc(x.title||"Formula image")}"><figcaption>${esc(x.title||"")}${x.top>=0&&T[x.top]?` <span class="tag">${esc(T[x.top])}</span>`:""}</figcaption>${own?`<div class="noprint"><button class="alt" data-ic="${i}">✎</button> <select data-it="${i}"><option value="-1">No topic</option>${T.map((t,k)=>`<option value="${k}" ${x.top==k?"selected":""}>${esc(t.slice(0,28))}</option>`).join("")}</select> <button class="alt" data-del="${i}">✕</button></div>`:""}</figure>`;
     }).join("");
   });
-  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{
-    if(!confirm("Delete this image for everyone?"))return;
-    try{fmsg("Deleting…");await delImg(b.dataset.del);fmsg("");drawImgs()}catch(x){fmsg("Delete failed: "+x.message)}
-  });
+  const run=async(m,f)=>{try{fmsg(m);await f();fmsg("");drawImgs()}catch(x){fmsg("Failed: "+x.message)}};
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>confirm("Delete this image for everyone?")&&run("Deleting…",()=>delImg(b.dataset.del)));
+  document.querySelectorAll("[data-ic]").forEach(b=>b.onclick=()=>{const x=LIB.items.find(i=>i.id==b.dataset.ic),v=prompt("Caption",x.title||"");if(v!==null)run("Saving…",()=>setImg(x.id,{title:v}))});
+  document.querySelectorAll("[data-it]").forEach(b=>b.onchange=()=>run("Saving…",()=>setImg(b.dataset.it,{top:+b.value})));
 }
+document.addEventListener("click",e=>{const u=e.target.dataset&&e.target.dataset.lb;if(u){const o=document.createElement("div");o.id="lb";o.innerHTML="<img>";o.firstChild.src=u;o.onclick=()=>o.remove();document.body.appendChild(o)}});
 async function formLib(){
-  const fi=document.querySelector("#fi");
-  document.querySelectorAll(".addimg").forEach(b=>{b.hidden=!CFG().tok;b.onclick=()=>{fi.dataset.sub=b.dataset.add;fi.click()}});
-  fi.onchange=async e=>{
-    const f=e.target.files[0];e.target.value="";if(!f)return;
-    const t=prompt("Caption for this image (optional)")||"";
-    try{fmsg("Uploading…");await addImg(f,+fi.dataset.sub,t);fmsg("Uploaded. Other visitors see it after the site rebuilds (about a minute).");drawImgs()}
-    catch(x){fmsg("Upload failed: "+x.message)}
-  };
-  fmsg("Loading images…");await loadLib();if(document.querySelector("#fm")&&document.querySelector("#fm").textContent=="Loading images…")fmsg("");drawImgs();
+  const fi=$("#fi"),own=!!CFG().tok;
+  document.querySelectorAll(".addimg").forEach(b=>{b.hidden=!own;b.onclick=()=>{fi.dataset.sub=b.dataset.add;fi.click()}});
+  const up=async(f,sub)=>{try{await addImgs(f.filter(x=>x.type.startsWith("image/")),sub);fmsg("Saved permanently in the repo. Others see it after the site redeploys (about a minute).");drawImgs()}catch(x){fmsg("Upload failed: "+x.message)}};
+  fi.onchange=e=>{const f=[...e.target.files];e.target.value="";if(f.length)up(f,+fi.dataset.sub)};
+  if(own){
+    document.querySelectorAll(".fc").forEach((c,i)=>{c.ondragover=e=>e.preventDefault();c.ondrop=e=>{e.preventDefault();up([...e.dataTransfer.files],i)}});
+    editForm();
+  }
+  fmsg("Loading images…");await loadLib();if($("#fm")&&$("#fm").textContent=="Loading images…")fmsg("");drawImgs();
+}
+function editForm(){
+  document.querySelectorAll(".fc").forEach((c,i)=>{
+    c.querySelectorAll(".f").forEach((f,j)=>f.insertAdjacentHTML("beforeend",` <span class="ed noprint"><button class="alt" data-fe="${i}.${j}">✎</button><button class="alt" data-fe="${i}.${j}.x">✕</button></span>`));
+    c.querySelector(".addimg").insertAdjacentHTML("afterend",`<button class="alt noprint" data-fa="${i}">+ Formula</button>`);
+  });
+  document.querySelectorAll("[data-fe]").forEach(b=>b.onclick=()=>{const [i,j,x]=b.dataset.fe.split("."),f=SUB[i].f;if(x){if(!confirm("Delete formula?"))return;f.splice(j,1)}else{const v=prompt("Formula",f[j]);if(!v)return;f[j]=v}dirty();nav()});
+  document.querySelectorAll("[data-fa]").forEach(b=>b.onclick=()=>{const v=prompt("New formula");if(!v)return;SUB[b.dataset.fa].f.push(v);dirty();nav()});
+}
+/* ---- Editable content (syllabus, notes, formulas) published as data/content.json ---- */
+function dirty(){st.draft=JSON.parse(JSON.stringify(SUB));save();showPub()}
+function showPub(){
+  if($("#pb"))return;const b=document.createElement("button");b.id="pb";b.className="noprint";b.textContent="Publish changes to site";
+  b.onclick=async()=>{try{
+    b.textContent="Publishing…";
+    const r=await fetch(api("data/content.json")+"?ref="+CFG().branch,{headers:ghH()});
+    await ghPut("data/content.json",b64(JSON.stringify({v:1,sub:SUB})),r.ok?(await r.json()).sha:null,"Update site content");
+    delete st.draft;save();b.remove();
+  }catch(e){b.textContent="Failed: "+e.message+" (tap to retry)"}};
+  document.body.appendChild(b);
+}
+function editSyl(){
+  document.querySelectorAll("details").forEach((d,i)=>{
+    const box=d.querySelector("div");
+    box.insertAdjacentHTML("afterbegin",`<p class="row noprint ed"><button class="alt" data-a="rn">✎ Rename subject</button><button class="alt" data-a="at">+ Topic</button></p>`);
+    box.querySelectorAll(".t").forEach((l,j)=>l.insertAdjacentHTML("beforeend",`<span class="ed"><button class="alt" data-a="rt" data-j="${j}">✎</button><button class="alt" data-a="dt" data-j="${j}">✕</button></span>`));
+    box.querySelectorAll("[data-a]").forEach(b=>b.onclick=e=>{e.preventDefault();e.stopPropagation();synEdit(i,b.dataset.a,+b.dataset.j)});
+  });
+  $("#main").insertAdjacentHTML("beforeend",`<p class="noprint ed"><button class="alt" id="as">+ Add subject</button></p>`);
+  $("#as").onclick=()=>{const v=prompt("New subject name");if(!v)return;SUB.push({n:v,t:"New topic",note:"",f:[]});dirty();nav()};
+}
+function synEdit(i,a,j){
+  const s=SUB[i],T=s.t.split(";"),c=v=>v.replace(/;/g,",");
+  if(a=="rn"){const v=prompt("Subject name",s.n);if(!v)return;s.n=v}
+  else if(a=="at"){const v=prompt("New topic");if(!v)return;T.push(c(v));s.t=T.join(";")}
+  else if(a=="rt"){const v=prompt("Topic",T[j]);if(!v)return;T[j]=c(v);s.t=T.join(";")}
+  else if(a=="dt"){
+    if(!confirm("Delete this topic?"))return;
+    T.splice(j,1);s.t=T.join(";");
+    for(let k=j;k<=T.length;k++){const o=st.done[i+"."+(k+1)];if(o)st.done[i+"."+k]=o;else delete st.done[i+"."+k]}
+  }
+  dirty();nav();
 }
 
 const $=s=>document.querySelector(s), $n=$("#nav"), $m=$("#main");
@@ -555,8 +633,47 @@ function bind(k){
   }
 }
 
+let NS=0;
+const _dash=V.dash;
+V.dash=()=>{
+  let d=0,t=0;SUB.forEach((x,i)=>{const p=pct(i);d+=p[0];t+=p[1]});
+  const P=t?Math.round(d/t*100):0,due=dueList().filter(x=>x.od).length;
+  return `<div class="hero"><div class="ring" style="--p:${P}"><b>${P}%</b></div><div><h2>Welcome back</h2><p class="sub" style="margin:0">${d} of ${t} topics done · ${due} revision${due==1?"":"s"} due today</p><p class="row" style="margin-top:10px"><a class="btn" href="#rev">Revise now</a><a class="btn alt" href="#syl">Continue syllabus</a></p></div></div>`+_dash();
+};
+V.notes=()=>{
+  const s=SUB[NS]||SUB[0],T=s.t.split(";");
+  return `<h2>Short notes</h2><p class="sub">Exam-focused summary per subject, plus your own notes (saved on this device).</p>
+  <div class="chips">${SUB.map((x,i)=>`<button class="chip ${i==NS?"on":""}" data-ns="${i}">${esc(x.n)}</button>`).join("")}</div>
+  <div class="card"><h3>${esc(s.n)}</h3><p>${esc(s.note||"No summary yet.")}</p>${CFG().tok?`<button class="alt noprint" id="en">✎ Edit summary</button>`:""}
+  <h3>Topics</h3><ul>${T.map((t,j)=>`<li>${st.done[NS+"."+j]?"✅":"⬜"} ${esc(t)}</li>`).join("")}</ul>
+  <p><a class="btn alt" href="#form">Open formulas</a></p></div>
+  <div class="card"><label>My notes for ${esc(s.n)}</label><textarea id="mn" rows="9" placeholder="Write shortcuts, mistakes to avoid, reminders…">${esc((st.notes||{})[NS]||"")}</textarea></div>`;
+};
+V.rev=()=>{
+  const l=dueList(),od=l.filter(x=>x.od),up=l.filter(x=>!x.od);
+  const row=x=>{const k=(st.done[x.i+"."+x.j]||{}).s||0;return `<div class="rv"><div><b>${esc(x.t)}</b><br><span class="tag">${esc(x.s)}</span> <span class="dots" title="Revised ${k} of ${INT.length} times">${INT.map((_,n)=>`<i class="${n<k?"on":""}"></i>`).join("")}</span></div><div class="row" style="flex:none">${x.od?'<span class="tag" style="border-color:var(--urg);color:var(--urg)">due</span>':`<span class="tag">${x.due}</span>`}<button data-r="${x.i}.${x.j}">Revised ✓</button></div></div>`};
+  return `<h2>Revision</h2><p class="sub">Spaced schedule: 1, 3, 7, 21, 45 and 90 days. Tick topics in Syllabus to add them.</p>
+  <div class="countdowns"><div class="card"><div class="cd-num">${od.length}</div><div class="cd-sub">Due now</div></div><div class="card"><div class="cd-num">${up.length}</div><div class="cd-sub">Upcoming</div></div></div>`+
+  (l.length?(od.length?"<h3>Due now</h3>"+od.map(row).join(""):`<div class="card">Nothing due today. Nice work.</div>`)+(up.length?"<h3>Coming up</h3>"+up.map(row).join(""):""):`<div class="card">Nothing scheduled yet. Tick topics in <a href="#syl">Syllabus</a> as you finish them.</div>`);
+};
+const _bind=bind;
+bind=function(k){
+  _bind(k);
+  if(k=="notes"){
+    document.querySelectorAll("[data-ns]").forEach(b=>b.onclick=()=>{NS=+b.dataset.ns;nav()});
+    $("#mn").oninput=e=>{(st.notes=st.notes||{})[NS]=e.target.value;save()};
+    if($("#en"))$("#en").onclick=()=>{const v=prompt("Summary",SUB[NS].note);if(v===null)return;SUB[NS].note=v;dirty();nav()};
+  }
+  if(k=="syl"&&CFG().tok)editSyl();
+};
+
 addEventListener("hashchange",nav);
 nav();
+(async()=>{
+  try{const r=await fetch("data/content.json?t="+Date.now());if(r.ok){const d=await r.json();if(d.sub&&d.sub.length)SUB.splice(0,SUB.length,...d.sub)}}catch(e){}
+  if(CFG().tok&&st.draft){SUB.splice(0,SUB.length,...st.draft);showPub()}
+  nav();
+})();
 updateThemeBtn();
 </script>
 </body>
