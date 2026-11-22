@@ -108,15 +108,30 @@ td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left;font-size:
 /* QCAB */
 #out{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:16px}
 .sheet{width:210mm;height:297mm;background:#fff;color:#111;position:relative;box-shadow:0 1px 8px rgba(0,0,0,.25);overflow:hidden;font-family:'Source Serif 4',serif;flex:none}
-.sheet .lines{position:absolute;left:25mm;right:12mm;top:36mm;bottom:14mm;background:repeating-linear-gradient(to bottom,transparent 0 7.4mm,#9db4cf 7.4mm 7.55mm)}
-.sheet .m1,.sheet .m2{position:absolute;top:0;bottom:0;width:.3mm;background:#c0392b}
-.sheet .m1{left:24mm}
-.sheet .m2{left:25mm}
-.sheet .rm{position:absolute;right:12mm;top:0;bottom:0;width:.3mm;background:#c0392b}
-.sheet .hd{position:absolute;left:25mm;right:12mm;top:10mm;height:22mm;border-bottom:.4mm solid #111;font:600 10pt Archivo,sans-serif;display:flex;flex-direction:column;justify-content:space-between}
-.sheet .hd div{display:flex;justify-content:space-between;gap:8px}
-.sheet .q{font:600 11pt/1.4 'Source Serif 4',serif;position:absolute;left:27mm;right:14mm;top:36mm;z-index:2;background:#fff;padding:1.5mm 2mm;border:.3mm solid #111;margin-bottom:2mm}
-.sheet .pn{position:absolute;bottom:5mm;width:100%;text-align:center;font:500 9pt Archivo,sans-serif}
+.sheet .bd{position:absolute;inset:8mm;border:.4mm solid #7a1f1f}
+.sheet .m1,.sheet .m2{position:absolute;top:8mm;bottom:8mm;width:.3mm;background:#b03a2e}
+.sheet .m1{left:23mm}.sheet .m2{left:24.2mm}
+.sheet .lines{position:absolute;left:25mm;right:27mm;top:44mm;bottom:19mm;background:repeating-linear-gradient(to bottom,transparent 0 8mm,#b9c7d9 8mm 8.2mm)}
+.sheet .mk{position:absolute;right:8mm;width:19mm;top:38mm;bottom:8mm;border-left:.3mm solid #b03a2e;text-align:center}
+.sheet .mk small,.sheet small{font:600 6.5pt Archivo,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#555}
+.sheet .mk small{display:block;padding-top:1.5mm}
+.sheet .hd{position:absolute;left:8mm;right:8mm;top:8mm;height:30mm;border-bottom:.4mm solid #7a1f1f;display:grid;grid-template-columns:26mm 1fr 30mm;font:600 10pt Archivo,sans-serif}
+.sheet .hd>div{padding:2mm 3mm;display:flex;flex-direction:column;justify-content:space-between}
+.sheet .hq,.sheet .hm{border-right:.3mm solid #7a1f1f}
+.sheet .hq b{font:800 24pt/1 Archivo,sans-serif}
+.sheet .hr{text-align:center}.sheet .hr b{font:800 20pt/1 Archivo,sans-serif}
+.rb{display:inline-block;width:5.5mm;height:6.5mm;border:.3mm solid #444;margin-left:1mm;text-align:center;font:600 9pt/6.5mm Archivo,sans-serif;vertical-align:middle;font-style:normal}
+.sheet .q{position:absolute;left:26mm;right:28mm;top:40mm;z-index:2;background:#fff;padding:1.5mm 2.5mm;border:.3mm solid #111;font:600 10.5pt/1.4 'Source Serif 4',serif}
+.sheet .q span{float:right;margin-left:6px;font:600 9pt Archivo,sans-serif}
+.sheet .ft{position:absolute;left:12mm;right:12mm;bottom:10.5mm;display:flex;justify-content:space-between;font:500 7pt Archivo,sans-serif;color:#555}
+.sheet .ft b{font:600 9pt Archivo,sans-serif;color:#111}
+.cov{padding:18mm 20mm}.cov h1{font:800 20pt Archivo,sans-serif;text-align:center;margin:4mm 0 1mm}
+.cov .c2{text-align:center;font:500 11pt Archivo,sans-serif;color:#444}
+.cov table,.idx table{width:100%;border-collapse:collapse;margin:6mm 0;font:500 10pt Archivo,sans-serif}
+.cov td,.cov th,.idx td,.idx th{border:.3mm solid #444;padding:2mm 3mm;text-align:left}
+.cov ol{font:400 9.5pt/1.5 'Source Serif 4',serif;margin:3mm 0;padding-left:5mm}
+.cov h4,.idx h4{font:700 10pt Archivo,sans-serif;margin:5mm 0 0;text-transform:uppercase;letter-spacing:.05em}
+.idx{padding:18mm 20mm}.idx h1{font:800 18pt Archivo,sans-serif;margin:4mm 0}
 @media print{
   @page{size:A4;margin:0}
   header,nav,.noprint,.sub,h2{display:none!important}
@@ -363,16 +378,24 @@ rev(){
       : `<div class="card">Nothing scheduled yet. Tick topics in <a href="#syl">Syllabus</a> as you finish them.</div>`);
 },
 qcab(){
-  return `<h2>QCAB generator</h2><p class="sub">Answer sheets in UPSC style: 6 and 8 marks = 2 pages, 12 marks = 3, 20 marks = 4. A4, red margin lines, ruled body.</p>
+  const c=st.qc||{};
+  return `<h2>QCAB generator</h2><p class="sub">Question-cum-answer booklet for practice: A4, framed pages, double margin, marks column, ruled body. 6 and 8 marks = 2 pages, 12 = 3, 20 = 4.</p>
     <div class="card noprint"><div class="row">
-      <div><label>Marks</label><select id="qm"><option value="6">6 marks (2 pages)</option><option value="8">8 marks (2 pages)</option><option value="12">12 marks (3 pages)</option><option value="20">20 marks (4 pages)</option></select></div>
-      <div><label>Question no.</label><input id="qn" value="1"></div>
-      <div><label>Subject</label><input id="qs" value="Civil Engineering Paper I"></div>
-      <div><label>Roll no. (optional)</label><input id="qr"></div>
+      <div><label>Subject / paper</label><input id="qs" value="${esc(c.s||"Civil Engineering Paper I")}"></div>
+      <div><label>Roll no. (7 boxes)</label><input id="qr" maxlength="7" value="${esc(c.r||"")}"></div>
+      <div><label>Name (cover page)</label><input id="qa" value="${esc(c.a||"")}"></div>
+      <div><label>Date</label><input id="qd" type="date" value="${esc(c.d||today())}"></div>
     </div>
-    <label>Question text (printed in a box on page 1)</label><textarea id="qt" rows="3"></textarea>
+    <h3>One question</h3>
+    <div class="row"><div><label>Marks</label><select id="qm"><option value="6">6 marks (2 pages)</option><option value="8">8 marks (2 pages)</option><option value="12">12 marks (3 pages)</option><option value="20">20 marks (4 pages)</option></select></div>
+      <div><label>Question no.</label><input id="qn" value="1"></div></div>
+    <label>Question text (printed in a box on its first page)</label><textarea id="qt" rows="2"></textarea>
+    <h3>Or a full booklet</h3>
+    <label>One question per line: <code>no | marks | text</code>. If filled, this replaces the single question above.</label>
+    <textarea id="ql" rows="5" placeholder="1a | 12 | Explain the Mohr circle ...&#10;1b | 8 | Derive Euler's buckling load ..."></textarea>
+    <p class="row"><label><input type="checkbox" id="oc" checked> Cover page with instructions</label><label><input type="checkbox" id="oi" checked> Index of questions</label><label><input type="checkbox" id="om" checked> Marks column</label><label><input type="checkbox" id="ol" checked> Ruled lines</label></p>
     <p class="row"><button id="qg">Generate</button><button class="alt" onclick="print()">Print / save as PDF</button></p>
-    <small>In the print dialog set margins to None and turn off headers and footers.</small></div>
+    <small>In the print dialog choose A4, margins None, and turn off headers and footers. This is a practice layout, not an official UPSC document.</small></div>
     <div id="out"></div>`;
 },
 sync(){
@@ -587,9 +610,27 @@ function bind(k){
   }
 
   if(k=="qcab") $("#qg").onclick=()=>{
-    const m=+$("#qm").value, n={6:2,8:2,12:3,20:4}[m];
+    const PG={6:2,8:2,12:3,20:4},pages=m=>PG[m]||Math.min(4,Math.max(2,Math.ceil(m/6))),opt=id=>$("#"+id).checked;
+    let Q=$("#ql").value.split("\n").map(l=>l.split("|").map(x=>x.trim())).filter(a=>a.length>=3&&a[0]).map(a=>({no:a[0],m:+a[1]||12,t:a.slice(2).join(" | ")}));
+    if(!Q.length)Q=[{no:$("#qn").value,m:+$("#qm").value,t:$("#qt").value.trim()}];
+    const sub=esc($("#qs").value),roll=$("#qr").value.trim(),nm=esc($("#qa").value),dt=esc($("#qd").value);
+    st.qc={s:$("#qs").value,r:roll,a:$("#qa").value,d:$("#qd").value};save();
+    let N=0;Q.forEach(q=>{q.n=pages(q.m);q.s=N+1;N+=q.n});
+    const boxes=r=>Array.from({length:7},(_,i)=>`<i class="rb">${esc(r[i]||"")}</i>`).join("");
+    const tot=Q.reduce((a,q)=>a+q.m,0);
     let h="";
-    for(let p=1;p<=n;p++) h+=`<div class="sheet"><i class="m1"></i><i class="m2"></i><i class="rm"></i><div class="hd"><div><span>${esc($("#qs").value)}</span><span>Roll No: ${esc($("#qr").value)||"__________"}</span></div><div><span>Q. ${esc($("#qn").value)}</span><span>${m} marks</span><span>Page ${p} of ${n}</span></div></div><div class="lines"></div>${p==1&&$("#qt").value.trim()?`<div class="q">${esc($("#qt").value)}</div>`:""}<div class="pn">${p} / ${n}</div></div>`;
+    if(opt("oc"))h+=`<div class="sheet cov"><div class="bd"></div><small>Practice booklet</small><h1>QUESTION-CUM-ANSWER BOOKLET</h1><p class="c2">${sub}</p>
+      <table><tr><th>Roll No.</th><td>${boxes(roll)}</td><th>Date</th><td>${dt}</td></tr><tr><th>Name</th><td colspan="3">${nm}</td></tr><tr><th>Candidate's signature</th><td></td><th>Invigilator's signature</th><td></td></tr></table>
+      <h4>Instructions</h4><ol><li>Write your Roll No. in the boxes above before you start.</li><li>Use only a blue or black pen. Do not write inside the marks column.</li><li>Begin each answer on the page headed with its question number.</li><li>Leave no ruled page half-used between answers unless you strike it out.</li><li>Draw neat sketches with a pencil and label them.</li><li>Write the question number clearly at the start of every answer.</li></ol>
+      <h4>For examiner's use only</h4><table><tr><th>Q. No.</th><th>Max marks</th><th>Marks awarded</th></tr>${Q.slice(0,12).map(q=>`<tr><td>${esc(q.no)}</td><td>${q.m}</td><td></td></tr>`).join("")}<tr><th>Total</th><th>${tot}</th><td></td></tr></table></div>`;
+    if(opt("oi"))h+=`<div class="sheet idx"><div class="bd"></div><small>Practice booklet</small><h1>Index of questions</h1><table><tr><th>Sr.</th><th>Q. No.</th><th>Question</th><th>Marks</th><th>Page</th></tr>${Q.slice(0,24).map((q,i)=>`<tr><td>${i+1}</td><td>${esc(q.no)}</td><td>${esc(q.t.slice(0,70)||"-")}</td><td>${q.m}</td><td>${q.s}</td></tr>`).join("")}</table></div>`;
+    let pg=0;
+    Q.forEach(q=>{for(let p=1;p<=q.n;p++){pg++;
+      h+=`<div class="sheet"><div class="bd"></div><i class="m1"></i><i class="m2"></i>
+      <div class="hd"><div class="hq"><small>Q. No.</small><b>${esc(q.no)}</b></div><div class="hm"><small>Question-cum-answer booklet</small><span>${sub}</span><span>Roll No. ${boxes(roll)}</span></div><div class="hr"><small>Marks</small><b>${q.m}</b><span>${p} / ${q.n}</span></div></div>
+      ${opt("om")?'<div class="mk"><small>Marks</small></div>':""}${opt("ol")?'<div class="lines"></div>':""}
+      ${p==1&&q.t?`<div class="q"><span>[${q.m} marks]</span>Q.${esc(q.no)} ${esc(q.t)}</div>`:""}
+      <div class="ft"><span>Practice booklet, not an official UPSC document</span><b>Page ${pg} of ${N}</b></div></div>`}});
     $("#out").innerHTML=h;
   };
 
