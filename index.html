@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14213d"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="icon-192.png">
 <title>Statically Determinate · IES Civil Prep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f8fafc;--card:#fff;--ink:#14213d;--mut:#6b7b92;--line:#e3e9f2;
+  --bg:#fafaf9;--card:#fff;--ink:#14213d;--mut:#6b7b92;--line:#e7e5e4;
   --acc:#1f4e8c;--hi:#e8a317;--ok:#2f8f5b;--urg:#b0281b;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -28,7 +29,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 'Source Serif 4',Georgia,serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Archivo,system-ui,sans-serif}
 h1,h2,h3,.sans,button,nav a,label,select,input,textarea{font-family:Archivo,system-ui,sans-serif}
 header{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:2px solid var(--ink);background:var(--card);flex-wrap:wrap}
 .logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
@@ -153,13 +154,30 @@ nav a{border-radius:999px;border-bottom:0}nav a.on{background:var(--ink);color:v
   nav a{white-space:nowrap}main{padding-bottom:90px}
 }
 @media print{.ed,#pb{display:none!important}}
+
+/* v4 minimal */
+.mark{width:38px;height:38px;padding:0;border:0;background:none;display:block}
+body{background:var(--bg)}
+.card,details,.countdown,.fimg,.rv,.hero{box-shadow:none;border:1px solid var(--line)}
+.card,details{padding:18px}
+h2{font-size:28px;letter-spacing:-.02em;margin:6px 0}h3{letter-spacing:-.01em}
+.sub{color:var(--mut)}.f{border-left-width:2px;border-radius:0 8px 8px 0}
+header{padding:12px 20px}nav a{font-weight:500}
+button{cursor:pointer}
+.timer{align-items:center;gap:10px}.timer b{font:700 22px/1 Archivo,sans-serif;font-variant-numeric:tabular-nums}
+#gso{position:fixed;inset:0;background:rgba(10,15,25,.5);backdrop-filter:blur(4px);z-index:60;display:flex;justify-content:center;align-items:flex-start;padding-top:12vh}
+.gsb{width:min(620px,92vw);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+#gsr{max-height:55vh;overflow:auto;margin-top:8px}
+#gsr a{display:block;padding:9px 10px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:14px}
+#gsr a:hover{background:var(--bg)}#gsr small{display:block;color:var(--mut)}
+@media(max-width:760px){#gsb{order:2;margin-left:auto}}
 </style>
 </head>
 <body>
 
 <header>
   <a class="logo" href="#dash">
-    <span class="mark">ΣF</span>
+    <svg class="mark" viewBox="0 0 40 40" width="38" height="38" role="img" aria-label="Statically Determinate"><rect width="40" height="40" rx="10" fill="#14213d"/><path d="M8 30 20 10 32 30Z M14 20h12" fill="none" stroke="#e8a317" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="8" cy="30" r="2.6" fill="#e8a317"/><circle cx="32" cy="30" r="2.6" fill="#e8a317"/><circle cx="20" cy="10" r="2.6" fill="#e8a317"/></svg>
     <span>
       <b>Statically Determinate</b>
       <small>ΣF = 0 · ΣM = 0 · IES Civil Engineering</small>
@@ -167,6 +185,7 @@ nav a{border-radius:999px;border-bottom:0}nav a.on{background:var(--ink);color:v
   </a>
   <nav id="nav"></nav>
   <button id="tt" aria-label="Toggle theme">🌙 Dark</button>
+<button class="alt" id="gsb" title="Search (press / or Ctrl+K)">⌕ Search</button>
 </header>
 
 <main id="main"></main>
@@ -399,7 +418,7 @@ async function loadLib(){
       const j=await r.json(); if(!r.ok)throw new Error(j.message);
       LIB={items:JSON.parse(unb64(j.content)).items||[],sha:j.sha};
     }else{
-      const r=await fetch("data/library.json?t="+Date.now());
+      const r=await fetch("data/library.json");
       LIB={items:r.ok?((await r.json()).items||[]):[],sha:null};
     }
   }catch(e){fmsg("Could not load library: "+e.message)}
@@ -604,7 +623,7 @@ function bind(k){
     };
     $("#cl").onclick=async()=>{
       try{
-        const r=await fetch("data/shared.json?t="+Date.now());if(!r.ok)throw new Error("nothing published yet");
+        const r=await fetch("data/shared.json");if(!r.ok)throw new Error("nothing published yet");
         const d=await r.json(),key=p=>[p.y,p.pp,p.q].join("|"),have=new Set(st.pyq.map(key));let n=0;
         (d.pyq||[]).forEach(p=>{if(SUB[p.s]&&!have.has(key(p))){st.pyq.push(p);n++}});
         save();cm(n+" new questions added.");
@@ -633,12 +652,53 @@ function bind(k){
   }
 }
 
+function gsearch(q){
+  const o=[],has=t=>(t||"").toLowerCase().includes(q);
+  SUB.forEach(s=>{
+    s.t.split(";").forEach(t=>has(t)&&o.push(["Topic",t,s.n,"syl"]));
+    s.f.forEach(f=>has(f)&&o.push(["Formula",f,s.n,"form"]));
+    if(has(s.note))o.push(["Note",s.note.slice(0,90),s.n,"notes"]);
+  });
+  (st.pyq||[]).forEach(p=>has(p.q)&&o.push(["PYQ",String(p.q).slice(0,90),p.y||"","pyq"]));
+  LIB.items.forEach(x=>has(x.title)&&o.push(["Image",x.title,SUB[x.sub]?SUB[x.sub].n:"","form"]));
+  return o.slice(0,30);
+}
+function openGS(){
+  if($("#gso"))return;
+  const o=document.createElement("div");o.id="gso";
+  o.innerHTML='<div class="gsb"><input id="gsi" placeholder="Search topics, formulas, notes, PYQs, images…" autocomplete="off"><div id="gsr"></div></div>';
+  o.onclick=e=>{if(e.target==o||e.target.closest("#gsr a"))o.remove()};
+  document.body.appendChild(o);
+  const i=$("#gsi"),r=$("#gsr");i.focus();
+  i.oninput=()=>{const q=i.value.trim().toLowerCase();if(q.length<2){r.innerHTML="";return}
+    r.innerHTML=gsearch(q).map(x=>`<a href="#${x[3]}"><span class="tag">${x[0]}</span> ${esc(x[1])}<small>${esc(x[2])}</small></a>`).join("")||'<p class="sub">No matches.</p>'};
+}
+addEventListener("keydown",e=>{
+  const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
+  if(e.key=="Escape"&&$("#gso"))$("#gso").remove();
+  else if((e.key=="/"&&!typing)||((e.ctrlKey||e.metaKey)&&e.key=="k")){e.preventDefault();openGS()}
+});
+function streak(){
+  const d=new Set(st.days||[]);let n=0;
+  for(let k=0;k<400;k++){if(d.has(iso(new Date(Date.now()-k*864e5))))n++;else if(k>0)break}
+  return n;
+}
+let TI=null,TL=1500;
+function tick(){const m=$("#tm");if(m)m.textContent=String(Math.floor(TL/60)).padStart(2,"0")+":"+String(TL%60).padStart(2,"0");const b=$("#tb");if(b)b.textContent=TI?"Pause":"Focus"}
+function toggleT(){
+  if(TI){clearInterval(TI);TI=null}
+  else TI=setInterval(()=>{
+    TL--;tick();
+    if(TL<=0){clearInterval(TI);TI=null;TL=1500;st.focus=st.focus||{};st.focus[today()]=(st.focus[today()]||0)+1;save();alert("Focus session done. Take a 5 minute break.");nav()}
+  },1000);
+  tick();
+}
 let NS=0;
 const _dash=V.dash;
 V.dash=()=>{
   let d=0,t=0;SUB.forEach((x,i)=>{const p=pct(i);d+=p[0];t+=p[1]});
   const P=t?Math.round(d/t*100):0,due=dueList().filter(x=>x.od).length;
-  return `<div class="hero"><div class="ring" style="--p:${P}"><b>${P}%</b></div><div><h2>Welcome back</h2><p class="sub" style="margin:0">${d} of ${t} topics done · ${due} revision${due==1?"":"s"} due today</p><p class="row" style="margin-top:10px"><a class="btn" href="#rev">Revise now</a><a class="btn alt" href="#syl">Continue syllabus</a></p></div></div>`+_dash();
+  return `<div class="hero"><div class="ring" style="--p:${P}"><b>${P}%</b></div><div><h2>Welcome back</h2><p class="sub" style="margin:0">${d} of ${t} topics done · ${due} revision${due==1?"":"s"} due · ${streak()} day streak</p><p class="row" style="margin-top:10px"><a class="btn" href="#rev">Revise now</a><a class="btn alt" href="#syl">Continue syllabus</a></p><p class="row timer"><b id="tm">25:00</b><button id="tb">Focus</button><span class="sub">${(st.focus||{})[today()]||0} sessions today</span></p></div></div>`+_dash();
 };
 V.notes=()=>{
   const s=SUB[NS]||SUB[0],T=s.t.split(";");
@@ -659,6 +719,7 @@ V.rev=()=>{
 const _bind=bind;
 bind=function(k){
   _bind(k);
+  if(k=="dash"){tick();$("#tb").onclick=toggleT}
   if(k=="notes"){
     document.querySelectorAll("[data-ns]").forEach(b=>b.onclick=()=>{NS=+b.dataset.ns;nav()});
     $("#mn").oninput=e=>{(st.notes=st.notes||{})[NS]=e.target.value;save()};
@@ -669,8 +730,11 @@ bind=function(k){
 
 addEventListener("hashchange",nav);
 nav();
+$("#gsb").onclick=openGS;
+{const d=st.days=st.days||[];if(!d.includes(today())){d.push(today());st.days=d.slice(-120);save()}}
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});
 (async()=>{
-  try{const r=await fetch("data/content.json?t="+Date.now());if(r.ok){const d=await r.json();if(d.sub&&d.sub.length)SUB.splice(0,SUB.length,...d.sub)}}catch(e){}
+  try{const r=await fetch("data/content.json");if(r.ok){const d=await r.json();if(d.sub&&d.sub.length)SUB.splice(0,SUB.length,...d.sub)}}catch(e){}
   if(CFG().tok&&st.draft){SUB.splice(0,SUB.length,...st.draft);showPub()}
   nav();
 })();
